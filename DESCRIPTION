@@ -1,0 +1,19 @@
+Package: adaptiveGPCA
+Title: Adaptive generalized PCA
+Version: 0.1
+Authors@R: "Julia Fukuyama <julia.fukuyama@gmail.com> [aut, cre]"
+Description: Implements adaptive gPCA. Also includes functions for use on phyloseq objects. 
+Depends:
+    R (>= 3.1.0)
+License: What license is it under?
+LazyData: true
+VignetteBuilder: knitr
+Suggests:
+    knitr,
+    testthat,
+    rARPACK
+Imports:
+    ape (>= 3.1.4),
+    ggplot2 (>= 1.0.0),
+    MASS (>= 7.3.33)
+RoxygenNote: 5.0.1
