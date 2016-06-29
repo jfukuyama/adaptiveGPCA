@@ -14,12 +14,14 @@ estimateComponents(X, Q, maxit = 8, tol = 10^(-10), plot = FALSE,
 
 \item{maxit}{The maximum number of bisections to try.}
 
-\item{tol}{Stop if the absolute value of the derivative is less than this. œ}
+\item{tol}{Stop if the absolute value of the derivative is less than this.}
 }
 \value{
-A list with r and sigma.
+A list with r, sigma, and the values of the likelihood on a
+grid of values between 0 and 1.
 }
 \description{
-Estimates the values of r and sigma in a model X sim N(0, sigma^2 (r Q + (1 - r)I)) using bisection.
+Estimates the values of r and sigma in a model X sim N(0, sigma^2
+(r Q + (1 - r)I)).
 }
 

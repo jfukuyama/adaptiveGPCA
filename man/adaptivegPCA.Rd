@@ -4,13 +4,15 @@
 \alias{adaptivegPCA}
 \title{Adaptive gPCA}
 \usage{
-adaptivegPCA(X, Q, k = 2)
+adaptivegPCA(X, Q, weights = rep(1, nrow(X)), k = 2)
 }
 \arguments{
 \item{X}{A data matrix}
 
 \item{Q}{The inner product matrix on the rows of X, can be given as
 an eigendecomposition (formatted as the output from eigen()).}
+
+\item{weights}{Data weights for the rows of X.}
 
 \item{k}{The number of components to return.}
 }

@@ -2,44 +2,27 @@
 
 #' Estimate parameters in hierarchical model
 #'
-#' Estimates the values of r and sigma in a model X sim N(0, sigma^2 (r Q + (1 - r)I)) using bisection. 
+#' Estimates the values of r and sigma in a model X sim N(0, sigma^2
+#' (r Q + (1 - r)I)).
 #'
 #' @param X A n x p matrix with n samples in p-dimensional space.
 #' @param Q The prior variance on the means.
 #' @param maxit The maximum number of bisections to try.
-#' @param tol Stop if the absolute value of the derivative is less than this. œ
+#' @param tol Stop if the absolute value of the derivative is less than this.
 #'
 #' 
-#' @return A list with r and sigma.
+#' @return A list with r, sigma, and the values of the likelihood on a
+#' grid of values between 0 and 1.
 #' @export
-estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10), plot = FALSE, Qeig = NULL) {
+estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10),
+                               plot = FALSE, Qeig = NULL) {
     if(is.null(Qeig)) {
         Qeig = eigen(Q, symmetric = TRUE)
     }
     Xtilde = X %*% Qeig$vectors
-    # first search along a grid to get an approximation of where the max is
-    rvec = seq(0,1,length.out = 100)
-    l = sapply(rvec, function(r) likelihoodR(Xtilde, r, Qeig$values))
-    # then do bisection in the area where this max is
-    start = which.max(l)
-    loidx = max(start - 1, 1)
-    hiidx = min(start + 1, 100)
-    lo = rvec[loidx]; hi = rvec[hiidx]
-    for(i in 1:maxit) {
-        r = (lo + hi) / 2
-        g = gradLik(Xtilde, r, Qeig$values)
-        if(g > 0) {
-            lo = r
-        } else {
-            hi = r
-        }
-        if(abs(g) <= tol) break
-    }
+    f = function(r) -likelihoodR(Xtilde, r, Qeig$values)
+    r = optimize(f, c(0,1))$minimum
     sigma2 = sigma2OfR(Xtilde, r, Qeig$values)
-    if(plot){
-        plot(l ~ rvec, type = 'l')
-        
-    }
     return(list(r = r, sigma = sqrt(sigma2)))
 }
 
@@ -100,11 +83,71 @@ likelihoodR <- function(Xtilde, r, D) {
 likelihood <- function(Xtilde, sigma, r, D) {
     p = ncol(Xtilde)
     n = nrow(Xtilde)
-    #s1 = n * p * 2 * log(sigma) + n * sum(log(r * D + 1 - r))
     s1 = n * sum(log(sigma^2 * (r * D + 1 - r)))
-    #prec = solve(sigma^2 * (r * Q + (1 - r) * diag(rep(1,p))))
-    #s2 = sum(apply(X, 1, function(x) x %*% prec %*% x))
     s2 = sum(apply(Xtilde, 1, function(x) sum(x^2 / (sigma^2 * (r * D + 1 - r)))))
     l = -.5 * (s1 + s2) - (p / 2) * log(2 * pi)
     return(l)
+}
+
+
+#' Variance along eigenvectors
+#' 
+#' Find the variance of the data along each of the eigenvectors
+#' @param X The data, each row a sample. 
+#' @param Q The inner product matrix, either as a matrix or as its
+#' eigendecomposition (the output from eigen).
+#'
+#' @return A vector containing the variances along each of the
+#' eigenvectors.
+#' @export
+varianceOnEvecs <- function(X, Q) {
+    if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
+        Qeig = Q
+    } else {
+        Qeig = eigen(Q, symmetric = TRUE)
+    }
+    Xtilde = X %*% Qeig$vectors
+    vars = apply(Xtilde, 2, var)
+    return(vars)
+}
+
+#' Likelihood of data in two-parameter model
+#'
+#' @param r1 Coefficient of Q
+#' @param r2 Coefficient of Q^(-1) in the noise part.
+#' @param Xtilde The data projected onto the eigenvectors of Q.
+#' @param D The eigenvalues of Q
+#'
+#' @return The marginal likelihood of the data given r1 and r2. 
+likelihood_two_params <- function(r1, r2, Xtilde, D) {
+    n = nrow(Xtilde)
+    p = ncol(Xtilde)
+    f = r1 * D + (1 - r1) * r2 * D^(-1) + (1 - r1) * (1 - r2)
+    xtnorm = apply(Xtilde, 1, function(x) sum(x^2 / f))
+    l = -n * .5 * sum(log(f)) - sum(.5 * p * log(xtnorm))
+    return(l)
+}
+
+
+#' Estimate variance components
+#'
+#' Estimate variance components in a two-parameter model where X ~
+#' N(0, sigma^2 (r1 Q + (1 - r1) (r2 Q^(-1) + (1 - r2) I)))
+#'
+#' @param X An n x p matrix with rows corresponding to observations.
+#' @param Q A p x p psd matrix giving the structure.
+#' 
+#' @return A vector with r1 and r2
+#' @export
+estimateComponents2 <- function(X, Q) {
+    if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
+        Qeig = Q
+    } else {
+        Qeig = eigen(Q, symmetric = TRUE)
+    }
+    Qeig$values = ncol(X) * Qeig$values / sum(Qeig$values)
+    Xtilde = X %*% Qeig$vectors
+    f = function(r) -likelihood_two_params(r[1], r[2], Xtilde, Qeig$values)
+    r = optim(c(.5, .5), f, lower = c(0,0), upper = c(1,1))$par
+    return(r)
 }

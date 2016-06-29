@@ -4,12 +4,16 @@
 \alias{gpcaFullFamily}
 \title{Make a sequence of ordinations}
 \usage{
-gpcaFullFamily(X, Q, k = 2, rvec = (0:100)/100, findReflections = TRUE)
+gpcaFullFamily(X, Q, weights = rep(1, nrow(X)), k = 2, rvec = (0:100)/100,
+  findReflections = TRUE, returnLong = FALSE, locationdata = NULL,
+  speciesdata = NULL)
 }
 \arguments{
 \item{X}{A data matrix.}
 
 \item{Q}{An inner product on the rows of X.}
+
+\item{weights}{A vector of weights for the rows of X.}
 
 \item{k}{The number of components to compute for each ordination.}
 

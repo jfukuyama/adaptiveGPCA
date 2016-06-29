@@ -15,5 +15,6 @@ Suggests:
 Imports:
     ape (>= 3.1.4),
     ggplot2 (>= 1.0.0),
-    MASS (>= 7.3.33)
+    MASS (>= 7.3.33),
+    shiny
 RoxygenNote: 5.0.1
