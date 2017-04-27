@@ -5,7 +5,8 @@
 \title{Shiny gadget for adaptive gPCA}
 \usage{
 visualizeFullFamily(fullFamily, sampleData = NULL, sample_mapping = aes(x =
-  X1, y = X2), varData = NULL, var_mapping = aes(x = X1, y = X2))
+  Axis1, y = Axis2), sample_facet = NULL, varData = NULL,
+  var_mapping = aes(x = Axis1, y = Axis2), layout = c(2, 6))
 }
 \arguments{
 \item{fullFamily}{The output from gpcaFullFamily}
@@ -19,6 +20,11 @@ for plotting the samples}
 
 \item{var_mapping}{An aesthetic mapping to be passed to ggplot for
 plotting the variables}
+
+\item{layout}{A vector of length 2. The first number gives the
+number of columns (out of 12) for the sidebar, the second number
+gives the number of columns (out of 12) for the sample plot in the
+main panel.}
 }
 \description{
 Shiny gadget that shows the ordinations from an entire family of

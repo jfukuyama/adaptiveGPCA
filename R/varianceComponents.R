@@ -138,7 +138,6 @@ likelihood_two_params <- function(r1, r2, Xtilde, D) {
 #' @param Q A p x p psd matrix giving the structure.
 #' 
 #' @return A vector with r1 and r2
-#' @export
 estimateComponents2 <- function(X, Q) {
     if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
         Qeig = Q

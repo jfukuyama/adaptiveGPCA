@@ -32,42 +32,6 @@ adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
                 r = r, evals = evals, sig = auto$sigma))
 }
 
-#' Adaptive gPCA
-#'
-#' Performs adaptive gPCA where the noise can be non-spherical
-#' (identity plus a scalar multiple of Q^(-1)).
-#'
-#' @param X An n x p matrix with rows corresponding to observations.
-#' @param Q A p x p psd matrix giving the structure of the variables.
-#' @param weights Data weights for the rows of X.
-#' @param k The number of components to return.
-#'
-#' @importFrom Iso pava
-#' @export
-adaptivegPCA2 <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
-    if(is.matrix(Q)) {
-        Qeig = eigen(Q, symmetric = TRUE)
-    } else if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
-        Qeig = Q
-    } else {
-        stop("Q is not formatted correctly")
-    }
-    # normalize so that the trace of Q is the same as the trace of the identity matrix
-    Qeig$values = ncol(X) * Qeig$values / sum(Qeig$values)
-    evecs = Qeig$vectors
-    v = varianceOnEvecs(X, Qeig)
-    iso = pava(v, decreasing = TRUE)
-    noise = iso[length(iso) / 2]
-    signal = sapply(iso - noise, function(x) max(x, 0))
-    evals = (signal^(-1) + noise^(-1))^(-1)
-    out.gpca = gpcaEvecs(X, evecs, evals, weights, k)
-    return(list(V = out.gpca$V, U = out.gpca$U, QV = out.gpca$QV,
-                lambda = out.gpca$lambda, vars = out.gpca$vars, evals = evals))
-
-}
-
-
-
 #' Make a sequence of ordinations
 #'
 #' Gives a list of ordinations going from structured to PCA.

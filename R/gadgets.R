@@ -17,7 +17,8 @@
 #' @import shiny
 #' @export
 visualizeFullFamily <-
-    function(fullFamily, sampleData = NULL, sample_mapping = aes(x = Axis1, y = Axis2), 
+    function(fullFamily, sampleData = NULL, sample_mapping = aes(x = Axis1, y = Axis2),
+             sample_facet = NULL, 
              varData = NULL, var_mapping = aes(x = Axis1, y = Axis2), layout = c(2,6)) {
 
         ui <- fluidPage(
@@ -58,6 +59,8 @@ visualizeFullFamily <-
                 else
                     p = ggplot(data.frame(fullFamily$locations[[input$r]]), sample_mapping) +
                         geom_point()
+                if(!is.null(sample_facet))
+                    p = p + sample_facet
                 p
             })
             output$plot_species = renderPlot({
@@ -87,6 +90,21 @@ visualizeFullFamily <-
 }
 
 
-selectVariables <- function() {
-    
+processFamily <- function(out.ff, rvec = (0:100)/100) {
+    locationsfull = data.frame(Reduce(rbind, out.ff$locations))
+    speciesfull = data.frame(Reduce(rbind, out.ff$species))
+    locationsfull$r = rep(rvec, each = nrow(out.ff$locations[[1]]))
+    speciesfull$r = rep(rvec, each = nrow(out.ff$species[[1]]))
+    p1 = ggplot() +
+        geom_point(aes(x = Axis1, y = Axis2, showSelected = r), data = locationsfull)
+    p2 = ggplot() +
+        geom_point(aes(x = Axis1, y = Axis2, showSelected = r), data = speciesfull)
+    selecting = ggplot() +
+        make_tallrect(locationsfull, "r") + 
+        geom_point(aes(x = r, y = 1, clickSelects = r), data = locationsfull)
+
+    animint2dir(list(p1 = p1, p2 = p2, selecting = selecting,
+                     time = list(variable = "r", ms = 300)),
+                out.dir = "~/simple", open.browser = FALSE)
+    servr::httd("~/simple")
 }

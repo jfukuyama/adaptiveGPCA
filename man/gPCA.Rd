@@ -9,7 +9,8 @@ gPCA(X, Q, D = rep(1, nrow(X)), k)
 \arguments{
 \item{X}{A data matrix}
 
-\item{Q}{An inner product matrix for the rows.}
+\item{Q}{An inner product matrix for the rows, either as a matrix
+or an eigendecomposition.}
 
 \item{D}{An inner product matrix for the columns.}
 
