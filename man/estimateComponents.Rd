@@ -4,8 +4,7 @@
 \alias{estimateComponents}
 \title{Estimate parameters in hierarchical model}
 \usage{
-estimateComponents(X, Q, maxit = 8, tol = 10^(-10), plot = FALSE,
-  Qeig = NULL)
+estimateComponents(X, Q, maxit = 8, tol = 10^(-10), Qeig = NULL)
 }
 \arguments{
 \item{X}{A n x p matrix with n samples in p-dimensional space.}
@@ -15,6 +14,9 @@ estimateComponents(X, Q, maxit = 8, tol = 10^(-10), plot = FALSE,
 \item{maxit}{The maximum number of bisections to try.}
 
 \item{tol}{Stop if the absolute value of the derivative is less than this.}
+
+\item{Qeig}{If the eigendecomposition of Q is already computed, it
+can be included here.}
 }
 \value{
 A list with r, sigma, and the values of the likelihood on a

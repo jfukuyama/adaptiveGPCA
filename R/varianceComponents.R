@@ -9,19 +9,21 @@
 #' @param Q The prior variance on the means.
 #' @param maxit The maximum number of bisections to try.
 #' @param tol Stop if the absolute value of the derivative is less than this.
+#' @param Qeig If the eigendecomposition of Q is already computed, it
+#' can be included here.
 #'
 #' 
 #' @return A list with r, sigma, and the values of the likelihood on a
 #' grid of values between 0 and 1.
 #' @export
 estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10),
-                               plot = FALSE, Qeig = NULL) {
+                               Qeig = NULL) {
     if(is.null(Qeig)) {
         Qeig = eigen(Q, symmetric = TRUE)
     }
     Xtilde = X %*% Qeig$vectors
     f = function(r) -likelihoodR(Xtilde, r, Qeig$values)
-    r = optimize(f, c(0,1))$minimum
+    r = stats::optimize(f, c(0,1))$minimum
     sigma2 = sigma2OfR(Xtilde, r, Qeig$values)
     return(list(r = r, sigma = sqrt(sigma2)))
 }
@@ -107,7 +109,7 @@ varianceOnEvecs <- function(X, Q) {
         Qeig = eigen(Q, symmetric = TRUE)
     }
     Xtilde = X %*% Qeig$vectors
-    vars = apply(Xtilde, 2, var)
+    vars = apply(Xtilde, 2, stats::var)
     return(vars)
 }
 
@@ -147,6 +149,6 @@ estimateComponents2 <- function(X, Q) {
     Qeig$values = ncol(X) * Qeig$values / sum(Qeig$values)
     Xtilde = X %*% Qeig$vectors
     f = function(r) -likelihood_two_params(r[1], r[2], Xtilde, Qeig$values)
-    r = optim(c(.5, .5), f, lower = c(0,0), upper = c(1,1))$par
+    r = stats::optim(c(.5, .5), f, lower = c(0,0), upper = c(1,1))$par
     return(r)
 }

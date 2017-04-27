@@ -4,10 +4,11 @@
 #' gPCAs and returns a gPCA object with the one selected
 #'
 #' @param fullFamily The output from gpcaFullFamily
-#' @param sampleData Optional data used for plotting the samples
+#' @param sample_data Optional data used for plotting the samples
 #' @param sample_mapping An aesthetic mapping to be passed to ggplot
 #' for plotting the samples
-#' @param varData Optional data used for plotting the variables
+#' @param sample_facet A ggplot faceting command used for faceting the samples. 
+#' @param var_data Optional data used for plotting the variables
 #' @param var_mapping An aesthetic mapping to be passed to ggplot for
 #' plotting the variables
 #' @param layout A vector of length 2. The first number gives the
@@ -15,11 +16,14 @@
 #' gives the number of columns (out of 12) for the sample plot in the
 #' main panel.
 #' @import shiny
+#' @importFrom ggplot2 aes ggplot geom_point aes_string
 #' @export
 visualizeFullFamily <-
-    function(fullFamily, sampleData = NULL, sample_mapping = aes(x = Axis1, y = Axis2),
+    function(fullFamily, sample_data = NULL,
+             sample_mapping = aes_string(x = "Axis1", y = "Axis2"),
              sample_facet = NULL, 
-             varData = NULL, var_mapping = aes(x = Axis1, y = Axis2), layout = c(2,6)) {
+             var_data = NULL,
+             var_mapping = aes_string(x = "Axis1", y = "Axis2"), layout = c(2,6)) {
 
         ui <- fluidPage(
             headerPanel("Visualization of adaptive gPCA"),
@@ -53,8 +57,8 @@ visualizeFullFamily <-
             })
 
             output$plot_samples = renderPlot({
-                if(!is.null(sampleData))
-                    p = ggplot(data.frame(fullFamily$locations[[input$r]], sampleData),
+                if(!is.null(sample_data))
+                    p = ggplot(data.frame(fullFamily$locations[[input$r]], sample_data),
                         sample_mapping) + geom_point()
                 else
                     p = ggplot(data.frame(fullFamily$locations[[input$r]]), sample_mapping) +
@@ -64,8 +68,8 @@ visualizeFullFamily <-
                 p
             })
             output$plot_species = renderPlot({
-                if(!is.null(varData))
-                    p = ggplot(data.frame(fullFamily$species[[input$r]], varData),
+                if(!is.null(var_data))
+                    p = ggplot(data.frame(fullFamily$species[[input$r]], var_data),
                         var_mapping) + geom_point()
                 else
                     p = ggplot(data.frame(fullFamily$species[[input$r]]), var_mapping) +
@@ -87,24 +91,4 @@ visualizeFullFamily <-
         }
 
   runGadget(ui, server)
-}
-
-
-processFamily <- function(out.ff, rvec = (0:100)/100) {
-    locationsfull = data.frame(Reduce(rbind, out.ff$locations))
-    speciesfull = data.frame(Reduce(rbind, out.ff$species))
-    locationsfull$r = rep(rvec, each = nrow(out.ff$locations[[1]]))
-    speciesfull$r = rep(rvec, each = nrow(out.ff$species[[1]]))
-    p1 = ggplot() +
-        geom_point(aes(x = Axis1, y = Axis2, showSelected = r), data = locationsfull)
-    p2 = ggplot() +
-        geom_point(aes(x = Axis1, y = Axis2, showSelected = r), data = speciesfull)
-    selecting = ggplot() +
-        make_tallrect(locationsfull, "r") + 
-        geom_point(aes(x = r, y = 1, clickSelects = r), data = locationsfull)
-
-    animint2dir(list(p1 = p1, p2 = p2, selecting = selecting,
-                     time = list(variable = "r", ms = 300)),
-                out.dir = "~/simple", open.browser = FALSE)
-    servr::httd("~/simple")
 }

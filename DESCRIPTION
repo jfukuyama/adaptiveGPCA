@@ -5,16 +5,16 @@ Authors@R: "Julia Fukuyama <julia.fukuyama@gmail.com> [aut, cre]"
 Description: Implements adaptive gPCA. Also includes functions for use on phyloseq objects. 
 Depends:
     R (>= 3.1.0)
-License: What license is it under?
+License: AGPL-3
 LazyData: true
 VignetteBuilder: knitr
 Suggests:
     knitr,
-    testthat,
-    rARPACK
+    testthat
 Imports:
     ape (>= 3.1.4),
     ggplot2 (>= 1.0.0),
     MASS (>= 7.3.33),
-    shiny
+    shiny,
+    phyloseq
 RoxygenNote: 5.0.1

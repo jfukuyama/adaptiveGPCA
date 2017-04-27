@@ -4,19 +4,22 @@
 \alias{visualizeFullFamily}
 \title{Shiny gadget for adaptive gPCA}
 \usage{
-visualizeFullFamily(fullFamily, sampleData = NULL, sample_mapping = aes(x =
-  Axis1, y = Axis2), sample_facet = NULL, varData = NULL,
-  var_mapping = aes(x = Axis1, y = Axis2), layout = c(2, 6))
+visualizeFullFamily(fullFamily, sample_data = NULL,
+  sample_mapping = aes_string(x = "Axis1", y = "Axis2"),
+  sample_facet = NULL, var_data = NULL, var_mapping = aes_string(x =
+  "Axis1", y = "Axis2"), layout = c(2, 6))
 }
 \arguments{
 \item{fullFamily}{The output from gpcaFullFamily}
 
-\item{sampleData}{Optional data used for plotting the samples}
+\item{sample_data}{Optional data used for plotting the samples}
 
 \item{sample_mapping}{An aesthetic mapping to be passed to ggplot
 for plotting the samples}
 
-\item{varData}{Optional data used for plotting the variables}
+\item{sample_facet}{A ggplot faceting command used for faceting the samples.}
+
+\item{var_data}{Optional data used for plotting the variables}
 
 \item{var_mapping}{An aesthetic mapping to be passed to ggplot for
 plotting the variables}

@@ -6,6 +6,6 @@
 \format{A phyloseq object.}
 \description{
 A phyloseq object describing an experiment on three people who took
-two courses of cipro. Reference is Dethlefsen and Relman.
+two courses of cipro. Reference is Dethlefsen and Relman, PNAS (2010).
 }
 

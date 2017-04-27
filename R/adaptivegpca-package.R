@@ -45,6 +45,12 @@ adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
 #' neighboring ordinations as close as possible. If k is very large
 #' this should be false since all possible axis combinations are
 #' searched over.
+#' @param returnLong Return a long data frame with the
+#' samples/variables instead of a list of data frames.
+#' @param sampledata Extra sample data to be included along with the
+#' sample scores.
+#' @param variabledata Extra variable data to be included along with
+#' the variable loadings.
 #' 
 #' @return A list with three components: one holding the location
 #' points, one holding the species points, and one holding the
@@ -53,7 +59,7 @@ adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
 #' @export
 gpcaFullFamily <- function(X, Q, weights = rep(1, nrow(X)), k = 2,
         rvec = (0:100)/100, findReflections = TRUE,
-        returnLong = FALSE, locationdata = NULL, speciesdata = NULL) {
+        returnLong = FALSE, sampledata = NULL, variabledata = NULL) {
     if(is.matrix(Q)) {
         Qeig = eigen(Q, symmetric = TRUE)
     } else if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
@@ -92,15 +98,15 @@ gpcaFullFamily <- function(X, Q, weights = rep(1, nrow(X)), k = 2,
     }
     if(returnLong) {
         locationsAugmented = lapply(1:length(rvec), function(i) {
-            df = data.frame(locationsList[[i]], r = rvec[i])
-            if(!is.null(locationdata))
-                df = cbind(df, locationdata)
+            df = data.frame(locationList[[i]], r = rvec[i])
+            if(!is.null(sampledata))
+                df = cbind(df, sampledata)
             return(df)
         })
         speciesAugmented = lapply(1:length(rvec), function(i) {
             df = data.frame(speciesList[[i]], r = rvec[i])
-            if(!is.null(speciesdata))
-                df = cbind(df, speciesdata)
+            if(!is.null(variabledata))
+                df = cbind(df, variabledata)
             return(df)
         })
         locationsfull = Reduce(rbind, locationsAugmented)
@@ -210,11 +216,11 @@ normalizeMatrix <- function (X)
 #' creates the matrices necessary to do a generalized PCA.
 #'
 #' @param physeq A phyloseq object.
-#' @importFrom ape vcv
 #'
 #' @return A list of the matrix to perform gPCA on (X), the norm for
 #' the rows (sigma), and the norm for the columns (D).
-#' 
+#' @importFrom phyloseq otu_table taxa_are_rows phy_tree
+#' @importFrom ape vcv
 #' @export
 processPhyseq <- function (physeq) 
 {
@@ -227,34 +233,4 @@ processPhyseq <- function (physeq)
     Xtilde = nm$Xtilde
     D = nm$D
     return(list(X = Xtilde, Q = Q, D = D))
-}
-
-
-
-
-slider <- function(plot, data) {
-    rvec = unique(data$r)
-    ui = miniPage(
-        gadgetTitleBar("Adaptive gPCA visualization"),
-        miniContentPanel(
-            plotOutput("plot", height = "90%"),
-            sliderInput("slider", label = "slider bar",
-                        min = 0, max = 1, value = 0)
-        )
-    )
-    server = function(input, output, session) {
-        output$plot = renderPlot({
-            plot %+% subset(data, r == getR())
-        })
-        getR = reactive({
-            sliderval = input$slider
-            r = rvec[which.min(abs(rvec - sliderval))]
-            return(r)
-        })
-
-        observeEvent(input$done, {
-            stopApp(getR())
-        })
-    }
-    runGadget(ui, server)    
 }

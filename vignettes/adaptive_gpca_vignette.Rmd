@@ -38,9 +38,9 @@ instead of automatically.
 ```{r, eval = FALSE}
 out.ff = gpcaFullFamily(abt_data$otutab, Qeig, k = 2)
 out.agpca = visualizeFullFamily(out.ff,
-                    sampleData = abt_data$sampledata,
+                    sample_data = abt_data$sampledata,
                     sample_mapping = aes(x = Axis1, y = Axis2, color = condition),
-                    varData = abt_data$variabledata,
+                    var_data = abt_data$variabledata,
                     var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
 ```
 

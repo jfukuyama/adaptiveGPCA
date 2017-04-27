@@ -5,8 +5,8 @@
 \title{Make a sequence of ordinations}
 \usage{
 gpcaFullFamily(X, Q, weights = rep(1, nrow(X)), k = 2, rvec = (0:100)/100,
-  findReflections = TRUE, returnLong = FALSE, locationdata = NULL,
-  speciesdata = NULL)
+  findReflections = TRUE, returnLong = FALSE, sampledata = NULL,
+  variabledata = NULL)
 }
 \arguments{
 \item{X}{A data matrix.}
@@ -23,6 +23,15 @@ gpcaFullFamily(X, Q, weights = rep(1, nrow(X)), k = 2, rvec = (0:100)/100,
 neighboring ordinations as close as possible. If k is very large
 this should be false since all possible axis combinations are
 searched over.}
+
+\item{returnLong}{Return a long data frame with the
+samples/variables instead of a list of data frames.}
+
+\item{sampledata}{Extra sample data to be included along with the
+sample scores.}
+
+\item{variabledata}{Extra variable data to be included along with
+the variable loadings.}
 }
 \value{
 A list with three components: one holding the location
