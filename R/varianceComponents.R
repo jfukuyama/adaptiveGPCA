@@ -2,8 +2,8 @@
 
 #' Estimate parameters in hierarchical model
 #'
-#' Estimates the values of r and sigma in a model X sim N(0, sigma^2
-#' (r Q + (1 - r)I)).
+#' Estimates the values of \eqn{r} and \eqn{\sigma} in a model \eqn{X \sim N(0, \sigma^2
+#' (r Q + (1 - r)I))}.
 #'
 #' @param X A n x p matrix with n samples in p-dimensional space.
 #' @param Q The prior variance on the means.
@@ -13,7 +13,7 @@
 #' can be included here.
 #'
 #' 
-#' @return A list with r, sigma, and the values of the likelihood on a
+#' @return A list with \eqn{r}, \eqn{\sigma}, and the values of the likelihood on a
 #' grid of values between 0 and 1.
 #' @export
 estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10),
@@ -32,7 +32,7 @@ estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10),
 #' Derivative of the likelihood
 #'
 #' Derivative of the likelihood in the hierarchical model as a
-#' function of r
+#' function of \eqn{r}.
 #'
 #' @param Xtilde The transformed data
 #' @param r r
@@ -45,9 +45,9 @@ gradLik <- function(Xtilde, r, D) {
     return(a + b)
 }
 
-#' Derivative of sigma^2
+#' Derivative of \eqn{\sigma^2}
 #'
-#' Derivative of sigma^2(r) in the hierarchical model
+#' Derivative of \eqn{\sigma^2(r)} in the hierarchical model
 #'
 #' @inheritParams gradLik
 gradSigma2OfR <- function(Xtilde, r, D) {
@@ -58,8 +58,8 @@ gradSigma2OfR <- function(Xtilde, r, D) {
     return(g)
 }
 
-#' Value of sigma^2 that maximizes the likelihood for a given value of
-#' r
+#' Value of \eqn{\sigma^2} that maximizes the likelihood for a given value of
+#' \eqn{r}
 #'
 #' @inheritParams gradLik
 sigma2OfR <- function(Xtilde, r, D) {
@@ -69,8 +69,8 @@ sigma2OfR <- function(Xtilde, r, D) {
     return(sigma2)
 }
 
-#' The likelihood at a given value of r and the maximizing sigma for
-#' that value of r
+#' The likelihood at a given value of \eqn{r} and the maximizing \eqn{\sigma} for
+#' that value of \eqn{r}.
 #'
 #' @inheritParams gradLik
 likelihoodR <- function(Xtilde, r, D) {
@@ -78,7 +78,7 @@ likelihoodR <- function(Xtilde, r, D) {
     return(likelihood(Xtilde, sigma, r, D))
 }
 
-#' The likelihood at a given value of r and sigma
+#' The likelihood at a given value of \eqn{r} and \eqn{\sigma}
 #'
 #' @inheritParams gradLik
 #' @param sigma Overall scaling factor. 
@@ -92,9 +92,11 @@ likelihood <- function(Xtilde, sigma, r, D) {
 }
 
 
-#' Variance along eigenvectors
+#' Variance along eigenvectors of Q
 #' 
-#' Find the variance of the data along each of the eigenvectors
+#' Project the sample points stored in the rows of X along the
+#' eigenvectors of Q and find the variance of each of the projections.
+#' 
 #' @param X The data, each row a sample. 
 #' @param Q The inner product matrix, either as a matrix or as its
 #' eigendecomposition (the output from eigen).
@@ -133,8 +135,8 @@ likelihood_two_params <- function(r1, r2, Xtilde, D) {
 
 #' Estimate variance components
 #'
-#' Estimate variance components in a two-parameter model where X ~
-#' N(0, sigma^2 (r1 Q + (1 - r1) (r2 Q^(-1) + (1 - r2) I)))
+#' Estimate variance components in a two-parameter model where \eqn{X \sim
+#' N(0, \sigma^2 (r_1 Q + (1 - r_1) (r_2 Q^(-1) + (1 - r_2) I)))}
 #'
 #' @param X An n x p matrix with rows corresponding to observations.
 #' @param Q A p x p psd matrix giving the structure.

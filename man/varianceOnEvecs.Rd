@@ -2,7 +2,7 @@
 % Please edit documentation in R/varianceComponents.R
 \name{varianceOnEvecs}
 \alias{varianceOnEvecs}
-\title{Variance along eigenvectors}
+\title{Variance along eigenvectors of Q}
 \usage{
 varianceOnEvecs(X, Q)
 }
@@ -17,6 +17,6 @@ A vector containing the variances along each of the
 eigenvectors.
 }
 \description{
-Find the variance of the data along each of the eigenvectors
+Project the sample points stored in the rows of X along the
+eigenvectors of Q and find the variance of each of the projections.
 }
-

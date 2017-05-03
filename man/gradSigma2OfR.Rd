@@ -2,7 +2,7 @@
 % Please edit documentation in R/varianceComponents.R
 \name{gradSigma2OfR}
 \alias{gradSigma2OfR}
-\title{Derivative of sigma^2}
+\title{Derivative of \eqn{\sigma^2}}
 \usage{
 gradSigma2OfR(Xtilde, r, D)
 }
@@ -14,6 +14,5 @@ gradSigma2OfR(Xtilde, r, D)
 \item{D}{The eigenvalues of Q}
 }
 \description{
-Derivative of sigma^2(r) in the hierarchical model
+Derivative of \eqn{\sigma^2(r)} in the hierarchical model
 }
-

@@ -2,8 +2,8 @@
 % Please edit documentation in R/varianceComponents.R
 \name{sigma2OfR}
 \alias{sigma2OfR}
-\title{Value of sigma^2 that maximizes the likelihood for a given value of
-r}
+\title{Value of \eqn{\sigma^2} that maximizes the likelihood for a given value of
+\eqn{r}}
 \usage{
 sigma2OfR(Xtilde, r, D)
 }
@@ -15,7 +15,6 @@ sigma2OfR(Xtilde, r, D)
 \item{D}{The eigenvalues of Q}
 }
 \description{
-Value of sigma^2 that maximizes the likelihood for a given value of
-r
+Value of \eqn{\sigma^2} that maximizes the likelihood for a given value of
+\eqn{r}
 }
-

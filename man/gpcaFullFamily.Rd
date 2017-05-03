@@ -40,6 +40,8 @@ variance fractions. Each list is itself a list of data frames
 (location/species points) or of vectors (for the variances).
 }
 \description{
-Gives a list of ordinations going from structured to PCA.
+Creates a sequence of gPCA data representations. One end of the
+sequence doesn't take into account the variable structure at all
+(PCA), and the other weights the structure of the variables very
+highly.
 }
-

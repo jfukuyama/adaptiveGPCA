@@ -19,11 +19,10 @@ estimateComponents(X, Q, maxit = 8, tol = 10^(-10), Qeig = NULL)
 can be included here.}
 }
 \value{
-A list with r, sigma, and the values of the likelihood on a
+A list with \eqn{r}, \eqn{\sigma}, and the values of the likelihood on a
 grid of values between 0 and 1.
 }
 \description{
-Estimates the values of r and sigma in a model X sim N(0, sigma^2
-(r Q + (1 - r)I)).
+Estimates the values of \eqn{r} and \eqn{\sigma} in a model \eqn{X \sim N(0, \sigma^2
+(r Q + (1 - r)I))}.
 }
-

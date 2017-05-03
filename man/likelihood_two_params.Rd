@@ -21,4 +21,3 @@ The marginal likelihood of the data given r1 and r2.
 \description{
 Likelihood of data in two-parameter model
 }
-

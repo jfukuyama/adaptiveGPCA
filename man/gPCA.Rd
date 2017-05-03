@@ -20,6 +20,6 @@ or an eigendecomposition.}
 A list with principal components, scores, and variable positions.
 }
 \description{
-Performs standard gPCA
+Performs standard gPCA with k components on a data matrix X with
+row inner product Q and column inner product D.
 }
-

@@ -22,4 +22,3 @@ the second element gives the optimal reflection.
 Find a reflection of one data frame so that it most closely matches
 another.
 }
-

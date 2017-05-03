@@ -31,6 +31,5 @@ main panel.}
 }
 \description{
 Shiny gadget that shows the ordinations from an entire family of
-gPCAs and returns a gPCA object with the one selected
+gPCAs and returns a gPCA object with the one selected by the user.
 }
-

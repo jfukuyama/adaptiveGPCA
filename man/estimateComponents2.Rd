@@ -15,7 +15,6 @@ estimateComponents2(X, Q)
 A vector with r1 and r2
 }
 \description{
-Estimate variance components in a two-parameter model where X ~
-N(0, sigma^2 (r1 Q + (1 - r1) (r2 Q^(-1) + (1 - r2) I)))
+Estimate variance components in a two-parameter model where \eqn{X \sim
+N(0, \sigma^2 (r_1 Q + (1 - r_1) (r_2 Q^(-1) + (1 - r_2) I)))}
 }
-

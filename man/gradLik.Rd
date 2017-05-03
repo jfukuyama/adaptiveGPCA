@@ -15,6 +15,5 @@ gradLik(Xtilde, r, D)
 }
 \description{
 Derivative of the likelihood in the hierarchical model as a
-function of r
+function of \eqn{r}.
 }
-

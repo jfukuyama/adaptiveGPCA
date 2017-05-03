@@ -1,20 +1,25 @@
 Package: adaptiveGPCA
-Title: Adaptive generalized PCA
+Title: Adaptive Generalized PCA
 Version: 0.1
-Authors@R: "Julia Fukuyama <julia.fukuyama@gmail.com> [aut, cre]"
-Description: Implements adaptive gPCA. Also includes functions for use on phyloseq objects. 
+Authors@R: person("Julia", "Fukuyama",
+	   email = "julia.fukuyama@gmail.com",
+	   role = c("aut", "cre"))
+Description: Implements adaptive gPCA, as described in: Fukuyama, J. (2017).
+	     Adaptive gPCA: A method for structured dimensionality reduction.
+	     arXiv preprint arXiv:1702.00501. The package also includes
+	     functionality for applying the method to phyloseq objects so
+	     that the method can be easily applied to microbiome data and a
+	     shiny app for interactive visualization. 
 Depends:
     R (>= 3.1.0)
 License: AGPL-3
 LazyData: true
 VignetteBuilder: knitr
 Suggests:
-    knitr,
-    testthat
+    knitr
 Imports:
     ape (>= 3.1.4),
     ggplot2 (>= 1.0.0),
-    MASS (>= 7.3.33),
-    shiny,
-    phyloseq
-RoxygenNote: 5.0.1
+    shiny (>= 1.0.0),
+    phyloseq (>= 1.14.0)
+RoxygenNote: 6.0.1

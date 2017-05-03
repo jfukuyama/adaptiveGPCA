@@ -10,4 +10,3 @@ the covariance matrix for the tree relating the OTUs (Q), data
 about the samples (sampledata), and taxonomic information about the
 OTUs (variabledata).
 }
-

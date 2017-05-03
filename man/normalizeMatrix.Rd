@@ -10,9 +10,16 @@ normalizeMatrix(X)
 \item{X}{The matrix to be normalized.}
 }
 \value{
-A list with the normalized matrix and the corresponding metric.
+A list with the normalized matrix (Xtilde) and the
+corresponding metric (D).
 }
 \description{
-Normalizes a count matrix and returns the corresponding metric.
+Normalizes a count matrix X for correspondence analysis and returns
+the corresponding metric. The normalization for X is as follows:
+First the row sums of X are computed, giving the weights for each
+sample. These weights are stored in a matrix D, which defines an
+inner product on the columns of X. Then the vectors of counts
+stored in the rows of X are replaced with proportions, and the
+resulting matrix is centered according to the inner product defined
+by D. Both the centered data matrix and D are returned to the user.
 }
-

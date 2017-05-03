@@ -2,7 +2,7 @@
 % Please edit documentation in R/varianceComponents.R
 \name{likelihood}
 \alias{likelihood}
-\title{The likelihood at a given value of r and sigma}
+\title{The likelihood at a given value of \eqn{r} and \eqn{\sigma}}
 \usage{
 likelihood(Xtilde, sigma, r, D)
 }
@@ -16,6 +16,5 @@ likelihood(Xtilde, sigma, r, D)
 \item{D}{The eigenvalues of Q}
 }
 \description{
-The likelihood at a given value of r and sigma
+The likelihood at a given value of \eqn{r} and \eqn{\sigma}
 }
-

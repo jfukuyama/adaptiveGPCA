@@ -17,6 +17,8 @@ an eigendecomposition (formatted as the output from eigen()).}
 \item{k}{The number of components to return.}
 }
 \description{
-Performs adaptive generalized PCA
+Performs adaptive generalized PCA, a dimensionality-reduction
+method which takes into account similarities between the
+variables. See Fukuyama (2017) at https://arxiv.org/abs/1702.00501
+for more details.
 }
-

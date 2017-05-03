@@ -2,7 +2,7 @@
 % Please edit documentation in R/adaptivegpca-package.R
 \name{gpcaEvecs}
 \alias{gpcaEvecs}
-\title{Performs gPCA with pre-computed eigenvectors and eigenvalues}
+\title{gPCA using pre-computed eidendecomposition}
 \usage{
 gpcaEvecs(X, evecs, evals, D = rep(1, nrow(X)), k)
 }
@@ -18,6 +18,5 @@ gpcaEvecs(X, evecs, evals, D = rep(1, nrow(X)), k)
 \item{k}{The number of components to return.}
 }
 \description{
-Performs gPCA with pre-computed eigenvectors and eigenvalues
+Performs gPCA with pre-computed eigenvectors and eigenvalues.
 }
-

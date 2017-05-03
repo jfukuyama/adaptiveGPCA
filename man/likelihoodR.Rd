@@ -2,8 +2,8 @@
 % Please edit documentation in R/varianceComponents.R
 \name{likelihoodR}
 \alias{likelihoodR}
-\title{The likelihood at a given value of r and the maximizing sigma for
-that value of r}
+\title{The likelihood at a given value of \eqn{r} and the maximizing \eqn{\sigma} for
+that value of \eqn{r}.}
 \usage{
 likelihoodR(Xtilde, r, D)
 }
@@ -15,7 +15,6 @@ likelihoodR(Xtilde, r, D)
 \item{D}{The eigenvalues of Q}
 }
 \description{
-The likelihood at a given value of r and the maximizing sigma for
-that value of r
+The likelihood at a given value of \eqn{r} and the maximizing \eqn{\sigma} for
+that value of \eqn{r}.
 }
-
