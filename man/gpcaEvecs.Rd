@@ -9,14 +9,16 @@ gpcaEvecs(X, evecs, evals, D = rep(1, nrow(X)), k)
 \arguments{
 \item{X}{Data matrix.}
 
-\item{evecs}{Eigenvectors of Q}
+\item{evecs}{Eigenvectors of \code{Q}, the inner product/similarity
+matrix.}
 
-\item{evals}{Eigenvalues of Q}
+\item{evals}{Eigenvalues of \code{Q}.}
 
-\item{D}{Inner product matrix for the columns.}
+\item{D}{Sample weights}
 
 \item{k}{The number of components to return.}
 }
 \description{
 Performs gPCA with pre-computed eigenvectors and eigenvalues.
 }
+\keyword{internal}

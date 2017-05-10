@@ -14,11 +14,13 @@ x-axis or the y-axis (or both or neither) so that the points in it
 most closely match df1.}
 }
 \value{
-A vector of length 2: Multiplying the first column of df2
-by the first element and multiplying the second column of df2 by
-the second element gives the optimal reflection.
+A vector of length \code{ncol(df1)}: Multiplying the first
+column of df2 by the first element and multiplying the second
+column of df2 by the second element and so on gives the optimal
+reflection.
 }
 \description{
 Find a reflection of one data frame so that it most closely matches
 another.
 }
+\keyword{internal}

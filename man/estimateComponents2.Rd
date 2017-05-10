@@ -7,9 +7,10 @@
 estimateComponents2(X, Q)
 }
 \arguments{
-\item{X}{An n x p matrix with rows corresponding to observations.}
+\item{X}{An n x p data matrix.}
 
-\item{Q}{A p x p psd matrix giving the structure.}
+\item{Q}{A p x p psd matrix giving the similarity between the
+variables.}
 }
 \value{
 A vector with r1 and r2
@@ -18,3 +19,4 @@ A vector with r1 and r2
 Estimate variance components in a two-parameter model where \eqn{X \sim
 N(0, \sigma^2 (r_1 Q + (1 - r_1) (r_2 Q^(-1) + (1 - r_2) I)))}
 }
+\keyword{internal}

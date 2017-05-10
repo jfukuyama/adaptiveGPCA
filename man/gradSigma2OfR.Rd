@@ -16,3 +16,4 @@ gradSigma2OfR(Xtilde, r, D)
 \description{
 Derivative of \eqn{\sigma^2(r)} in the hierarchical model
 }
+\keyword{internal}

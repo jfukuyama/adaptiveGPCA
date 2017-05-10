@@ -7,16 +7,21 @@
 varianceOnEvecs(X, Q)
 }
 \arguments{
-\item{X}{The data, each row a sample.}
+\item{X}{An \eqn{n \times p} data matrix, each row corresponding to a sample.}
 
-\item{Q}{The inner product matrix, either as a matrix or as its
-eigendecomposition (the output from eigen).}
+\item{Q}{A \eqn{p \times p} similarity matrix, either as a matrix
+or as its eigendecomposition (the output from \code{eigen}).}
 }
 \value{
-A vector containing the variances along each of the
-eigenvectors.
+A vector containing the variance of the samples along each
+of the eigenvectors of \code{Q}.
 }
 \description{
-Project the sample points stored in the rows of X along the
-eigenvectors of Q and find the variance of each of the projections.
+Project the sample points stored in the rows of \code{X} along the
+eigenvectors of \code{Q} and find the variance along each of the
+projections.
+}
+\examples{
+data(AntibioticSmall)
+voe = varianceOnEvecs(AntibioticSmall$X, AntibioticSmall$Q)
 }

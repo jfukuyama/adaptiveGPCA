@@ -10,8 +10,8 @@ normalizeMatrix(X)
 \item{X}{The matrix to be normalized.}
 }
 \value{
-A list with the normalized matrix (Xtilde) and the
-corresponding metric (D).
+A list with the normalized matrix (\code{Xtilde}) and the
+row weights (\code{D}).
 }
 \description{
 Normalizes a count matrix X for correspondence analysis and returns
@@ -23,3 +23,4 @@ stored in the rows of X are replaced with proportions, and the
 resulting matrix is centered according to the inner product defined
 by D. Both the centered data matrix and D are returned to the user.
 }
+\keyword{internal}

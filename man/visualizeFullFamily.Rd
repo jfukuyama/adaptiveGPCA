@@ -10,26 +10,50 @@ visualizeFullFamily(fullFamily, sample_data = NULL,
   "Axis1", y = "Axis2"), layout = c(2, 6))
 }
 \arguments{
-\item{fullFamily}{The output from gpcaFullFamily}
+\item{fullFamily}{The output from \code{\link{gpcaFullFamily}}}
 
 \item{sample_data}{Optional data used for plotting the samples}
 
-\item{sample_mapping}{An aesthetic mapping to be passed to ggplot
-for plotting the samples}
+\item{sample_mapping}{An aesthetic mapping to be passed to
+\code{\link[ggplot2]{ggplot}} for plotting the samples}
 
-\item{sample_facet}{A ggplot faceting command used for faceting the samples.}
+\item{sample_facet}{A \code{\link[ggplot2]{ggplot}} faceting
+command used for faceting the samples.}
 
 \item{var_data}{Optional data used for plotting the variables}
 
-\item{var_mapping}{An aesthetic mapping to be passed to ggplot for
-plotting the variables}
+\item{var_mapping}{An aesthetic mapping to be passed to
+\code{\link[ggplot2]{ggplot}} for plotting the variables}
 
 \item{layout}{A vector of length 2. The first number gives the
 number of columns (out of 12) for the sidebar, the second number
 gives the number of columns (out of 12) for the sample plot in the
 main panel.}
 }
+\value{
+This function will open a 'shiny' app in a browser
+window. You can investigate the results for different values of
+\eqn{r} with this app. Once you press the 'done' button, the app
+will close and the function will return an R object containing the
+results for the value of \eqn{r} (the regularization parameter)
+that was chosen in the app. The returned object is a list
+containing the variable loadings on the principal axes (\code{QV}),
+the sample/row scores (\code{U}), and the fraction of the variance
+explained by each of the axes (\code{vars}).
+}
 \description{
 Shiny gadget that shows the ordinations from an entire family of
 gPCAs and returns a gPCA object with the one selected by the user.
+}
+\examples{
+\dontrun{
+data(AntibioticPhyloseq)
+pp = processPhyloseq(AntibioticPhyloseq)
+out.ff = gpcaFullFamily(pp$X, Q = pp$Q, D = pp$D, k = 2)
+out.agpca = visualizeFullFamily(out.ff,
+    sample_data = sample_data(AntibioticPhyloseq),
+    sample_mapping = aes(x = Axis1, y = Axis2, color = condition),
+    var_data = tax_table(AntibioticPhyloseq),
+    var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
+}
 }

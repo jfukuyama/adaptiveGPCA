@@ -18,3 +18,4 @@ likelihood(Xtilde, sigma, r, D)
 \description{
 The likelihood at a given value of \eqn{r} and \eqn{\sigma}
 }
+\keyword{internal}

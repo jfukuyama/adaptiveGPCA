@@ -1,23 +1,20 @@
-
-
 #' Estimate parameters in hierarchical model
 #'
 #' Estimates the values of \eqn{r} and \eqn{\sigma} in a model \eqn{X \sim N(0, \sigma^2
 #' (r Q + (1 - r)I))}.
 #'
-#' @param X A n x p matrix with n samples in p-dimensional space.
-#' @param Q The prior variance on the means.
-#' @param maxit The maximum number of bisections to try.
-#' @param tol Stop if the absolute value of the derivative is less than this.
-#' @param Qeig If the eigendecomposition of Q is already computed, it
+#' @param X An \eqn{n \times p} data matrix. 
+#' @param Q A \eqn{p \times p} matrix giving the prior variance on the
+#' rows of \code{X}.
+#' @param Qeig If the eigendecomposition of \code{Q} is already computed, it
 #' can be included here.
-#'
 #' 
-#' @return A list with \eqn{r}, \eqn{\sigma}, and the values of the likelihood on a
-#' grid of values between 0 and 1.
+#' @return A list with \eqn{r} and \eqn{\sigma}. 
+#' @examples
+#' data(AntibioticSmall)
+#' estimateComponents(AntibioticSmall$X, AntibioticSmall$Q)
 #' @export
-estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10),
-                               Qeig = NULL) {
+estimateComponents <- function(X, Q, Qeig = NULL) {
     if(is.null(Qeig)) {
         Qeig = eigen(Q, symmetric = TRUE)
     }
@@ -37,6 +34,7 @@ estimateComponents <- function(X, Q, maxit = 8, tol = 10^(-10),
 #' @param Xtilde The transformed data
 #' @param r r
 #' @param D The eigenvalues of Q
+#' @keywords internal
 gradLik <- function(Xtilde, r, D) {
     n = nrow(Xtilde)
     p = ncol(Xtilde)
@@ -50,6 +48,7 @@ gradLik <- function(Xtilde, r, D) {
 #' Derivative of \eqn{\sigma^2(r)} in the hierarchical model
 #'
 #' @inheritParams gradLik
+#' @keywords internal
 gradSigma2OfR <- function(Xtilde, r, D) {
     p = length(D)
     n = nrow(Xtilde)
@@ -62,6 +61,7 @@ gradSigma2OfR <- function(Xtilde, r, D) {
 #' \eqn{r}
 #'
 #' @inheritParams gradLik
+#' @keywords internal
 sigma2OfR <- function(Xtilde, r, D) {
     p = length(D)
     n = nrow(Xtilde)
@@ -73,6 +73,7 @@ sigma2OfR <- function(Xtilde, r, D) {
 #' that value of \eqn{r}.
 #'
 #' @inheritParams gradLik
+#' @keywords internal
 likelihoodR <- function(Xtilde, r, D) {
     sigma = sqrt(sigma2OfR(Xtilde, r, D))
     return(likelihood(Xtilde, sigma, r, D))
@@ -81,7 +82,8 @@ likelihoodR <- function(Xtilde, r, D) {
 #' The likelihood at a given value of \eqn{r} and \eqn{\sigma}
 #'
 #' @inheritParams gradLik
-#' @param sigma Overall scaling factor. 
+#' @param sigma Overall scaling factor.
+#' @keywords internal
 likelihood <- function(Xtilde, sigma, r, D) {
     p = ncol(Xtilde)
     n = nrow(Xtilde)
@@ -94,18 +96,22 @@ likelihood <- function(Xtilde, sigma, r, D) {
 
 #' Variance along eigenvectors of Q
 #' 
-#' Project the sample points stored in the rows of X along the
-#' eigenvectors of Q and find the variance of each of the projections.
+#' Project the sample points stored in the rows of \code{X} along the
+#' eigenvectors of \code{Q} and find the variance along each of the
+#' projections.
 #' 
-#' @param X The data, each row a sample. 
-#' @param Q The inner product matrix, either as a matrix or as its
-#' eigendecomposition (the output from eigen).
+#' @param X An \eqn{n \times p} data matrix, each row corresponding to a sample.
+#' @param Q A \eqn{p \times p} similarity matrix, either as a matrix
+#' or as its eigendecomposition (the output from \code{eigen}).
 #'
-#' @return A vector containing the variances along each of the
-#' eigenvectors.
+#' @return A vector containing the variance of the samples along each
+#' of the eigenvectors of \code{Q}.
+#' @examples
+#' data(AntibioticSmall)
+#' voe = varianceOnEvecs(AntibioticSmall$X, AntibioticSmall$Q)
 #' @export
 varianceOnEvecs <- function(X, Q) {
-    if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
+    if(is.list(Q) && !is.null(Q$vectors) && !is.null(Q$values)) {
         Qeig = Q
     } else {
         Qeig = eigen(Q, symmetric = TRUE)
@@ -122,7 +128,8 @@ varianceOnEvecs <- function(X, Q) {
 #' @param Xtilde The data projected onto the eigenvectors of Q.
 #' @param D The eigenvalues of Q
 #'
-#' @return The marginal likelihood of the data given r1 and r2. 
+#' @return The marginal likelihood of the data given r1 and r2.
+#' @keywords internal
 likelihood_two_params <- function(r1, r2, Xtilde, D) {
     n = nrow(Xtilde)
     p = ncol(Xtilde)
@@ -138,10 +145,12 @@ likelihood_two_params <- function(r1, r2, Xtilde, D) {
 #' Estimate variance components in a two-parameter model where \eqn{X \sim
 #' N(0, \sigma^2 (r_1 Q + (1 - r_1) (r_2 Q^(-1) + (1 - r_2) I)))}
 #'
-#' @param X An n x p matrix with rows corresponding to observations.
-#' @param Q A p x p psd matrix giving the structure.
+#' @param X An n x p data matrix. 
+#' @param Q A p x p psd matrix giving the similarity between the
+#' variables.
 #' 
 #' @return A vector with r1 and r2
+#' @keywords internal
 estimateComponents2 <- function(X, Q) {
     if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
         Qeig = Q

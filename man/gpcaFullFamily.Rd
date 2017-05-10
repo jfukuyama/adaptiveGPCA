@@ -9,19 +9,20 @@ gpcaFullFamily(X, Q, weights = rep(1, nrow(X)), k = 2, rvec = (0:100)/100,
   variabledata = NULL)
 }
 \arguments{
-\item{X}{A data matrix.}
+\item{X}{A data matrix of size \eqn{n \times p}.}
 
-\item{Q}{An inner product on the rows of X.}
+\item{Q}{A \eqn{p \times p} similarity matrix defining an inner
+product on the rows of \code{X}.}
 
-\item{weights}{A vector of weights for the rows of X.}
+\item{weights}{A vector of weights for the rows of \code{X}.}
 
 \item{k}{The number of components to compute for each ordination.}
 
-\item{rvec}{The values of r for which to make the ordinations.}
+\item{rvec}{The values of \eqn{r} for which to make the ordinations.}
 
 \item{findReflections}{Whether or not flip the axes so as to make
-neighboring ordinations as close as possible. If k is very large
-this should be false since all possible axis combinations are
+neighboring ordinations as close as possible. If \code{k} is very
+large this should be false since all possible axis combinations are
 searched over.}
 
 \item{returnLong}{Return a long data frame with the
@@ -34,14 +35,20 @@ sample scores.}
 the variable loadings.}
 }
 \value{
-A list with three components: one holding the location
-points, one holding the species points, and one holding the
-variance fractions. Each list is itself a list of data frames
-(location/species points) or of vectors (for the variances).
+A list containing elements for the sample points
+(\code{locationList}), the species points (\code{speciesList}), and
+the variance fractions (\code{varsList}). Each list is itself a
+list of data frames (location/species points) or of vectors (for
+the variances).
 }
 \description{
 Creates a sequence of gPCA data representations. One end of the
-sequence doesn't take into account the variable structure at all
-(PCA), and the other weights the structure of the variables very
-highly.
+sequence (\eqn{r = 0}) doesn't do any regularization according to
+the variable structure (and so is just standard PCA), and the other
+(\eqn{r = 1}) does a maximal amount of regularization according to
+the variable structure.
+}
+\examples{
+data(AntibioticSmall)
+out.ff = gpcaFullFamily(AntibioticSmall$X, AntibioticSmall$Q, k = 2)
 }

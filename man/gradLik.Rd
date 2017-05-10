@@ -17,3 +17,4 @@ gradLik(Xtilde, r, D)
 Derivative of the likelihood in the hierarchical model as a
 function of \eqn{r}.
 }
+\keyword{internal}

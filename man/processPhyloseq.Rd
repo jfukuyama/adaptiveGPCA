@@ -2,12 +2,13 @@
 % Please edit documentation in R/adaptivegpca-package.R
 \name{processPhyloseq}
 \alias{processPhyloseq}
-\title{Make the input matrices for PCA}
+\title{Make the input matrices for adaptive gPCA}
 \usage{
 processPhyloseq(physeq, ca = FALSE)
 }
 \arguments{
-\item{physeq}{A phyloseq object.}
+\item{physeq}{A \code{\link[phyloseq]{phyloseq}} object, from the
+phyloseq package.}
 
 \item{ca}{If TRUE, do the normalization as for correspondence
 analysis (transform counts to relative abundances, compute sample
@@ -15,10 +16,15 @@ weights, center the relative abundances according to the sample
 weights). Otherwise, simply center the data.}
 }
 \value{
-A list of the matrix to perform gPCA on (X), the norm for
-the rows (Q), and the sample weights (weights).
+A list of the matrix to perform adaptive gPCA on
+(\code{X}), the species similarity matrix (\code{Q}), and the
+sample weights (\code{weights}).
 }
 \description{
-Takes a phyloseq object and creates the matrices necessary to do a
-generalized PCA.
+Takes a phyloseq object and creates the matrices necessary to do
+adaptive gPCA.
+}
+\examples{
+data(AntibioticPhyloseq)
+pp = processPhyloseq(AntibioticPhyloseq)
 }

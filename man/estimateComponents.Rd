@@ -4,25 +4,25 @@
 \alias{estimateComponents}
 \title{Estimate parameters in hierarchical model}
 \usage{
-estimateComponents(X, Q, maxit = 8, tol = 10^(-10), Qeig = NULL)
+estimateComponents(X, Q, Qeig = NULL)
 }
 \arguments{
-\item{X}{A n x p matrix with n samples in p-dimensional space.}
+\item{X}{An \eqn{n \times p} data matrix.}
 
-\item{Q}{The prior variance on the means.}
+\item{Q}{A \eqn{p \times p} matrix giving the prior variance on the
+rows of \code{X}.}
 
-\item{maxit}{The maximum number of bisections to try.}
-
-\item{tol}{Stop if the absolute value of the derivative is less than this.}
-
-\item{Qeig}{If the eigendecomposition of Q is already computed, it
+\item{Qeig}{If the eigendecomposition of \code{Q} is already computed, it
 can be included here.}
 }
 \value{
-A list with \eqn{r}, \eqn{\sigma}, and the values of the likelihood on a
-grid of values between 0 and 1.
+A list with \eqn{r} and \eqn{\sigma}.
 }
 \description{
 Estimates the values of \eqn{r} and \eqn{\sigma} in a model \eqn{X \sim N(0, \sigma^2
 (r Q + (1 - r)I))}.
+}
+\examples{
+data(AntibioticSmall)
+estimateComponents(AntibioticSmall$X, AntibioticSmall$Q)
 }

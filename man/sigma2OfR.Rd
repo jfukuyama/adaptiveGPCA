@@ -18,3 +18,4 @@ sigma2OfR(Xtilde, r, D)
 Value of \eqn{\sigma^2} that maximizes the likelihood for a given value of
 \eqn{r}
 }
+\keyword{internal}

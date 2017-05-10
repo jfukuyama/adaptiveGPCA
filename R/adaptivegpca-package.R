@@ -2,17 +2,25 @@
 #'
 #' Performs adaptive generalized PCA, a dimensionality-reduction
 #' method which takes into account similarities between the
-#' variables. See Fukuyama (2017) at https://arxiv.org/abs/1702.00501
-#' for more details.
+#' variables. See \href{https://arxiv.org/abs/1702.00501}{Fukuyama,
+#' J. (2017)} for more details.
 #'
-#' @param X A data matrix
-#' @param Q The inner product matrix on the rows of X, can be given as
-#' an eigendecomposition (formatted as the output from eigen()).
-#' @param weights Data weights for the rows of X. 
+#' @param X A \eqn{n \times p} data matrix. 
+#' @param Q A \eqn{p \times p} similarity matrix on the variables defining
+#' an inner product on the rows of \code{X}, can also be given as an
+#' eigendecomposition (formatted as the output from \code{eigen}).
+#' @param weights A vector of length \eqn{n} containing weights for
+#' the rows of \code{X}.
 #' @param k The number of components to return.
-#'
+#' @return A list containing the row/sample scores (\code{U}), the
+#' variable loadings (\code{QV}), the proportion of variance explained
+#' by each of the principal components (\code{vars}), the value of
+#' \eqn{r} that was used (\code{r}).
+#' @examples
+#' data(AntibioticSmall)
+#' out.agpca = adaptivegpca(AntibioticSmall$X, AntibioticSmall$Q, k = 2)
 #' @export
-adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
+adaptivegpca <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
     if(is.matrix(Q)) {
         Qeig = eigen(Q, symmetric = TRUE)
     } else if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
@@ -23,7 +31,7 @@ adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
     # normalize so that the trace of Q is the same as the trace of the identity matrix
     Qeig$values = ncol(X) * Qeig$values / sum(Qeig$values)
     evecs = Qeig$vectors
-    auto = estimateComponents(X, Q, maxit = 30, Qeig = Qeig)
+    auto = estimateComponents(X, Q, Qeig = Qeig)
     r = auto$r
     sigma2 = auto$sigma^2
     evals = (rep(1/(sigma2 * (1-r)), ncol(X)) + (sigma2 * r)^(-1) * Qeig$values^(-1))^(-1)
@@ -36,18 +44,20 @@ adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
 #' Make a sequence of ordinations
 #'
 #' Creates a sequence of gPCA data representations. One end of the
-#' sequence doesn't take into account the variable structure at all
-#' (PCA), and the other weights the structure of the variables very
-#' highly.
+#' sequence (\eqn{r = 0}) doesn't do any regularization according to
+#' the variable structure (and so is just standard PCA), and the other
+#' (\eqn{r = 1}) does a maximal amount of regularization according to
+#' the variable structure.
 #' 
-#' @param X A data matrix.
-#' @param Q An inner product on the rows of X.
-#' @param weights A vector of weights for the rows of X. 
+#' @param X A data matrix of size \eqn{n \times p}. 
+#' @param Q A \eqn{p \times p} similarity matrix defining an inner
+#' product on the rows of \code{X}.
+#' @param weights A vector of weights for the rows of \code{X}. 
 #' @param k The number of components to compute for each ordination.
-#' @param rvec The values of r for which to make the ordinations.
+#' @param rvec The values of \eqn{r} for which to make the ordinations.
 #' @param findReflections Whether or not flip the axes so as to make
-#' neighboring ordinations as close as possible. If k is very large
-#' this should be false since all possible axis combinations are
+#' neighboring ordinations as close as possible. If \code{k} is very
+#' large this should be false since all possible axis combinations are
 #' searched over.
 #' @param returnLong Return a long data frame with the
 #' samples/variables instead of a list of data frames.
@@ -56,10 +66,14 @@ adaptivegPCA <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
 #' @param variabledata Extra variable data to be included along with
 #' the variable loadings.
 #' 
-#' @return A list with three components: one holding the location
-#' points, one holding the species points, and one holding the
-#' variance fractions. Each list is itself a list of data frames
-#' (location/species points) or of vectors (for the variances).
+#' @return A list containing elements for the sample points
+#' (\code{locationList}), the species points (\code{speciesList}), and
+#' the variance fractions (\code{varsList}). Each element is itself a
+#' list of data frames (location/species points) or of vectors (for
+#' the variances).
+#' @examples
+#' data(AntibioticSmall)
+#' out.ff = gpcaFullFamily(AntibioticSmall$X, AntibioticSmall$Q, k = 2)
 #' @export
 gpcaFullFamily <- function(X, Q, weights = rep(1, nrow(X)), k = 2,
         rvec = (0:100)/100, findReflections = TRUE,
@@ -132,9 +146,11 @@ gpcaFullFamily <- function(X, Q, weights = rep(1, nrow(X)), k = 2,
 #' x-axis or the y-axis (or both or neither) so that the points in it
 #' most closely match df1.
 #'
-#' @return A vector of length 2: Multiplying the first column of df2
-#' by the first element and multiplying the second column of df2 by
-#' the second element gives the optimal reflection.
+#' @return A vector of length \code{ncol(df1)}: Multiplying the first
+#' column of df2 by the first element and multiplying the second
+#' column of df2 by the second element and so on gives the optimal
+#' reflection.
+#' @keywords internal
 findReflection <- function(df1, df2) {
     l = list()
     for(i in 1:ncol(df1)) {
@@ -156,10 +172,12 @@ findReflection <- function(df1, df2) {
 #' Performs gPCA with pre-computed eigenvectors and eigenvalues.
 #' 
 #' @param X Data matrix.
-#' @param evecs Eigenvectors of Q
-#' @param evals Eigenvalues of Q
-#' @param D Inner product matrix for the columns.
-#' @param k The number of components to return. 
+#' @param evecs Eigenvectors of \code{Q}, the inner product/similarity
+#' matrix.
+#' @param evals Eigenvalues of \code{Q}. 
+#' @param D Sample weights
+#' @param k The number of components to return.
+#' @keywords internal
 gpcaEvecs <- function(X, evecs, evals, D = rep(1, nrow(X)), k) {
     J = X %*% evecs
     J = sweep(J, 2, STATS = sqrt(evals), FUN = "*")
@@ -176,18 +194,23 @@ gpcaEvecs <- function(X, evecs, evals, D = rep(1, nrow(X)), k) {
 
 #' gPCA
 #'
-#' Performs standard gPCA with k components on a data matrix X with
-#' row inner product Q and column inner product D.
+#' Performs standard gPCA with \code{k} components on a data matrix \code{X} with
+#' row inner product \code{Q} and weights \code{D}.
 #'
-#' @param X A data matrix
-#' @param Q An inner product matrix for the rows, either as a matrix
-#' or an eigendecomposition. 
-#' @param D An inner product matrix for the columns.
+#' @param X A data matrix of size \eqn{n \times p}. 
+#' @param Q An inner product matrix for the rows, either as a \eqn{p
+#' \times p} matrix or an eigendecomposition of such a matrix.
+#' @param D Sample weights, a vector of length \eqn{n}. 
 #' @param k The number of components to return.
 #'
-#' @return A list with principal components, scores, and variable positions.
+#' @return A list with variable loadings on the principal axes
+#' (\code{QV}), sample/row scores (\code{U}), the fraction of the
+#' variance explained by each of the axes (\code{vars}).
+#' @examples
+#' data(AntibioticSmall)
+#' out.gpca = gpca(AntibioticSmall$X, AntibioticSmall$Q, k = 2)
 #' @export
-gPCA <- function(X, Q, D = rep(1, nrow(X)), k) {
+gpca <- function(X, Q, D = rep(1, nrow(X)), k) {
     if(is.matrix(Q)) {
         Qeig = eigen(Q, symmetric = TRUE)
     } else if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
@@ -211,35 +234,40 @@ gPCA <- function(X, Q, D = rep(1, nrow(X)), k) {
 #' 
 #' @param X The matrix to be normalized.
 #'
-#' @return A list with the normalized matrix (Xtilde) and the
-#' corresponding metric (D).
+#' @return A list with the normalized matrix (\code{Xtilde}) and the
+#' row weights (\code{D}).
+#' @keywords internal
 normalizeMatrix <- function (X) 
 {
     wL = rowSums(X) / sum(X)
     X = diag((1 / wL)) %*% X / sum(X)
     Xtilde = (diag(1, nrow(X)) - matrix(1, nrow = nrow(X), ncol = 1) %*% 
         matrix(wL, nrow = 1)) %*% X
-    D = diag(wL)
-    D = D/max(D)
+    D = wL/max(wL)
     return(list(Xtilde = Xtilde, D = D))
 }
 
 
-#' Make the input matrices for PCA
+#' Make the input matrices for adaptive gPCA
 #'
-#' Takes a phyloseq object and creates the matrices necessary to do a
-#' generalized PCA.
+#' Takes a phyloseq object and creates the matrices necessary to do
+#' adaptive gPCA.
 #'
-#' @param physeq A phyloseq object.
+#' @param physeq A \code{\link[phyloseq]{phyloseq}} object, from the
+#' phyloseq package.
 #' @param ca If TRUE, do the normalization as for correspondence
 #' analysis (transform counts to relative abundances, compute sample
 #' weights, center the relative abundances according to the sample
 #' weights). Otherwise, simply center the data. 
 #'
-#' @return A list of the matrix to perform gPCA on (X), the norm for
-#' the rows (Q), and the sample weights (weights).
+#' @return A list of the matrix to perform adaptive gPCA on
+#' (\code{X}), the species similarity matrix (\code{Q}), and the
+#' sample weights (\code{weights}).
 #' @importFrom phyloseq otu_table taxa_are_rows phy_tree
 #' @importFrom ape vcv
+#' @examples
+#' data(AntibioticPhyloseq)
+#' pp = processPhyloseq(AntibioticPhyloseq)
 #' @export
 processPhyloseq <- function (physeq, ca = FALSE) 
 {
@@ -251,7 +279,7 @@ processPhyloseq <- function (physeq, ca = FALSE)
     if(ca) {
         nm = normalizeMatrix(X)
         Xtilde = nm$Xtilde
-        weights = diag(nm$D)
+        weights = nm$D
     } else {
         Xtilde = scale(X, scale = FALSE)
         weights = rep(1, nrow(X))

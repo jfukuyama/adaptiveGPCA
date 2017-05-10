@@ -1,20 +1,24 @@
 #' Antibiotic time course experiment.
 #'
-#' A phyloseq object describing an experiment on three people who took
-#' two courses of cipro. Reference is Dethlefsen and Relman, PNAS
-#' (2010), at https://www.ncbi.nlm.nih.gov/pubmed/20847294
+#' A phyloseq object describing a time course experiment in which
+#' three people two courses of cipro and had their gut microbiomes
+#' sampled. See Dethlefsen and Relman, PNAS (2010), at
+#' https://www.ncbi.nlm.nih.gov/pubmed/20847294 for more details.
 #'
 #' @format A phyloseq object.
-#' @name abt
+#' @name AntibioticPhyloseq
 NULL
 
-#' Antibiotic time course experiment, alternate format
+#' A subset of the antibiotic data
 #'
-#' A list with components for the normalized OTU abundances (otutab),
-#' the covariance matrix for the tree relating the OTUs (Q), data
-#' about the samples (sampledata), and taxonomic information about the
-#' OTUs (variabledata).
+#' This is a smaller version of the \code{AntibioticPhyloseq} dataset,
+#' for use in the examples so that the running time isn't so long. It
+#' has the same samples and a randomly selected set of 200 of the
+#' taxa. It is stored as a list with three components: the normalized
+#' OTU abundances (\code{X}), the similarity matrix for the taxa
+#' (\code{Q}), and the diagonal weight matrix (\code{D}, the identity
+#' matrix).
 #'
-#' @format A list with four components.
-#' @name abt_data
+#' @format A list with three components.
+#' @name AntibioticSmall
 NULL

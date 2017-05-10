@@ -18,3 +18,4 @@ likelihoodR(Xtilde, r, D)
 The likelihood at a given value of \eqn{r} and the maximizing \eqn{\sigma} for
 that value of \eqn{r}.
 }
+\keyword{internal}
