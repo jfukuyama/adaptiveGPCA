@@ -1,0 +1,32 @@
+#' adaptiveGPCA: A package for structured dimensionality reduction
+#'
+#' This package implements the methods for structured dimensionality
+#' reduction described in
+#' \href{https://arxiv.org/abs/1702.00501}{Fukuyama, J. (2017)}. The
+#' general idea is to obtain a low-dimensional representation of the
+#' data, similar to that given by PCA, which incorporates side
+#' information about the relationships between the variables. The
+#' output is similar to a PCA biplot, but the variable loadings are
+#' regularized so that similar variables are encouraged to have
+#' similar loadings on the principal axes.
+#' 
+#' There are two main ways of using this package. The function
+#' \code{\link{adaptivegpca}} will choose how much to regularize the
+#' variables according to the similarities between them, while the
+#' function \code{\link{gpcaFullFamily}} produces analogous output for
+#' a range of regularization parameters. With this function, the
+#' results for the different regularization parameters are inspected
+#' with the \code{\link{visualizeFullFamily}} function, and the
+#' desired parameter is chosen manually.
+#'
+#' The package also contains functionality to integrate with phyloseq:
+#' the function \code{\link{processPhyloseq}} takes a
+#' \code{\link[phyloseq]{phyloseq}} object and creates the inputs
+#' necessary to perform adaptive gPCA on a microbiome dataset
+#' including information about the phylogenetic relationships between
+#' the bacteria.
+#' 
+#'
+#' @docType package
+#' @name adaptiveGPCA-package
+NULL
