@@ -36,9 +36,27 @@ adaptivegpca <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
     sigma2 = auto$sigma^2
     evals = (rep(1/(sigma2 * (1-r)), ncol(X)) + (sigma2 * r)^(-1) * Qeig$values^(-1))^(-1)
     out.gpca = gpcaEvecs(X, evecs, evals, weights, k)
-    return(list(V = out.gpca$V, U = out.gpca$U, QV = out.gpca$QV,
+    out = list(V = out.gpca$V, U = out.gpca$U, QV = out.gpca$QV,
                 lambda = out.gpca$lambda, vars = out.gpca$vars,
-                r = r, evals = evals, sig = auto$sigma))
+               r = r, evals = evals, sig = auto$sigma)
+    class(out) = "adaptivegpca"
+    return(out)
+}
+
+
+#' Print an adaptivegpca object
+#'
+#' @param x \code{adaptivegpca} object.
+#' @param ... Not used.
+#' @method print adaptivegpca
+#' @export
+print.adaptivegpca <- function(x, ...) {
+    cat("An object of class adaptivegpca\n")
+    cat("-------------------------------\n")
+    cat(paste("Number of axes:", ncol(x$V), "\n"))
+    cat(paste("Value of r chosen:", round(x$r, digits = 3), "\n"))
+    cat(paste("Fraction of variance explained\nby first", ncol(x$V), "axes:\n"))
+    cat(round(x$vars[1:ncol(x$V)] / sum(x$vars), digits = 3), "\n")
 }
 
 #' Make a sequence of ordinations

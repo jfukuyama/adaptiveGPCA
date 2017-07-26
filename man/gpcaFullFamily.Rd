@@ -37,7 +37,7 @@ the variable loadings.}
 \value{
 A list containing elements for the sample points
 (\code{locationList}), the species points (\code{speciesList}), and
-the variance fractions (\code{varsList}). Each list is itself a
+the variance fractions (\code{varsList}). Each element is itself a
 list of data frames (location/species points) or of vectors (for
 the variances).
 }
