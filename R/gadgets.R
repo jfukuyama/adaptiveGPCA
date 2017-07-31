@@ -113,3 +113,98 @@ visualizeFullFamily <-
 
   runGadget(ui, server)
 }
+
+
+#' Shiny gadget for tree/taxonomy inspection
+#'
+#' Shiny gadget that allows users to visualize the scores of the taxa
+#' on the agpca axes, their positions on the phylogenetic tree, and
+#' their taxonomic assignments.
+#'
+#' @param agpcafit An agpca object, created either by the function
+#'     \code{\link{adaptivegpca}} or by
+#'     \code{\link{visualizeFullFamily}}.
+#' @param physeq A phyloseq object with a tree and a taxonomy table. 
+#' @param axes The axes to plot, must be a vector of two whole
+#'     numbers.
+#' @param br.length Plot the tree with the branch lengths?
+#' @param height The height, in pixels, of the plotting region.
+#' @return The function will open a browser window showing the tree
+#'     and the locations of the taxa on the selected agpca
+#'     axes. "Brushing" over the plot will highlight the positions of
+#'     the selected taxa on the tree and list their taxonomic
+#'     assignments. Clicking the "done" button will exit the app and
+#'     return a data frame containing the positions of the selected
+#'     taxa on the agpca axes, the taxonomic assignments of the
+#'     selected taxa, and their names.
+#' @import shiny
+#' @importFrom ggplot2 ggplot geom_point aes_string
+#' @importFrom phyloseq plot_tree tax_table phy_tree
+#' @examples
+#' \dontrun{
+#' data(AntibioticPhyloseq)
+#' pp = processPhyloseq(AntibioticPhyloseq)
+#' out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)
+#' treeInspect(out.agpca, AntibioticPhyloseq)
+#' }
+#' @export
+inspectTaxonomy <- function(agpcafit, physeq,
+                        axes = c(1,2), br.length = FALSE, height = 600) {
+    check_axes(axes, agpcafit)
+    axis.names = paste("Axis", axes, sep = "")
+    axis.labels = paste("Axis ", axes, ": ", round(agpcafit$vars[axes] * 100, digits = 1), "%", sep = "")
+    tt2 = data.frame(as(tax_table(physeq), "matrix"))
+    ggdf = data.frame(agpcafit$QV, tt2)
+    ggdf$otu = rownames(ggdf)
+    tr2 = phy_tree(physeq)
+    if(!br.length & !is.null(tr2$edge.length)) {
+        tr2$edge.length = rep(1, length(tr2$edge.length))
+    }
+    ptree = plot_tree(tr2)
+
+    ui = fluidPage(
+        fluidRow(
+            column(7,
+                   h1("Taxonomy Inspection")),
+            column(1,
+                   div(style="float:right;margin-top:25px;",
+                       actionButton("done", "Done")))),
+        fluidRow(
+            column(2,
+                   fluidRow(plotOutput("treeplot", height = height))),
+            column(6, 
+                   fluidRow(plotOutput("plot1", height = height, brush = brushOpts(id = "plot1_brush"))))),
+        fluidRow(
+            column(8,
+                   h3("Selected taxa"))),
+        fluidRow(
+            column(8,
+                   tableOutput("brush_info")))
+    )
+
+
+    server = function(input, output) {
+        output$plot1 = renderPlot({
+            ggplot(ggdf, aes_string(axis.names[1], axis.names[2])) + geom_point() +
+                xlab(axis.labels[1]) + ylab(axis.labels[2])
+        })
+        otus = reactive({
+          brushedPoints(ggdf, input$plot1_brush)$otu  
+        })
+        output$treeplot = renderPlot({
+            ptree +
+                geom_point(aes_string(x = "xleft + 1", y = "y"), size = 3,
+                           color = "#F98400", data = ptree$data[ptree$data$OTU %in% otus(),])
+        })
+        output$brush_info = renderTable({
+            brushedPoints(ggdf, input$plot1_brush)[,-c(1,2,ncol(ggdf))]
+        }, striped = TRUE)
+        observe({
+            if(input$done > 0){
+                stopApp(brushedPoints(ggdf, input$plot1_brush))
+            }
+        })
+    }
+
+    runGadget(ui, server)
+}
