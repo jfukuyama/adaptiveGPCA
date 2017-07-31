@@ -9,9 +9,9 @@
 #' @param Q A \eqn{p \times p} similarity matrix on the variables defining
 #' an inner product on the rows of \code{X}, can also be given as an
 #' eigendecomposition (formatted as the output from \code{eigen}).
+#' @param k The number of components to return.
 #' @param weights A vector of length \eqn{n} containing weights for
 #' the rows of \code{X}.
-#' @param k The number of components to return.
 #' @return A list containing the row/sample scores (\code{U}), the
 #' variable loadings (\code{QV}), the proportion of variance explained
 #' by each of the principal components (\code{vars}), the value of
@@ -20,7 +20,7 @@
 #' data(AntibioticSmall)
 #' out.agpca = adaptivegpca(AntibioticSmall$X, AntibioticSmall$Q, k = 2)
 #' @export
-adaptivegpca <- function(X, Q, weights = rep(1, nrow(X)), k = 2) {
+adaptivegpca <- function(X, Q, k = 2, weights = rep(1, nrow(X))) {
     if(is.matrix(Q)) {
         Qeig = eigen(Q, symmetric = TRUE)
     } else if(is.list(Q) & !is.null(Q$vectors) & !is.null(Q$values)) {
