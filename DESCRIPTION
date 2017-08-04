@@ -12,7 +12,8 @@ License: AGPL-3
 LazyData: true
 VignetteBuilder: knitr
 Suggests:
-    knitr
+    knitr,
+    rmarkdown
 Imports:
     ape (>= 3.1.4),
     ggplot2 (>= 1.0.0),
