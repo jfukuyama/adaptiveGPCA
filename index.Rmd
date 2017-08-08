@@ -49,18 +49,19 @@ out.agpca = visualizeFullFamily(out.ff,
                     var_data = tax_table(AntibioticPhyloseq),
                     var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
 ```
-```{r}
-## Runs adaptive gPCA
+```{r fig.width=6, fig.height=4}
+## Runs adaptive gPCA, autamatic choice of structure parameter
 out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)
-## plot the samples from adaptive gPCA
+## Plot the samples from adaptive gPCA
 ggplot(data.frame(out.agpca$U, sample_data(AntibioticPhyloseq))) +
     geom_point(aes(x = Axis1, y = Axis2, color = type, shape = ind))
-## plot the variables from adaptive gPCA
+```{r fig.width = 8, fig.height = 4}
+## Plot the variables from adaptive gPCA
 ggplot(data.frame(out.agpca$QV, tax_table(AntibioticPhyloseq))) +
     geom_point(aes(x = Axis1, y = Axis2, color = Phylum))
 ```
 ```{r, eval = FALSE}
-## This line will open a browser window that allows you to#
+## This line will open a browser window that allows you to
 ## access more information about the taxa in the biplot
 t = inspectTaxonomy(out.agpca, AntibioticPhyloseq)
 ```
