@@ -26,15 +26,13 @@ devtools::install_github("jfukuyama/adaptiveGPCA")
 ## Quick start for microbiome data
 
 The package comes with a [full vignette](https://cran.r-project.org/web/packages/adaptiveGPCA/vignettes/adaptive_gpca_vignette.html), which explains all of the functions and their arguments. To get a feel for what the package does, you can try out the following commands, which run adaptive gPCA on an example microbiome dataset that comes with the package.
-
-```r
+```{r}
 ## Load the required packages
 library(adaptiveGPCA)
 library(ggplot2)
 library(phyloseq)
 ```
-
-```r
+```{r}
 ## Load the example data, which is stored as a phyloseq object
 data(AntibioticPhyloseq)
 ## Process the phyloseq object so it contains the elements required for adaptive gPCA
@@ -42,8 +40,7 @@ pp = processPhyloseq(AntibioticPhyloseq)
 ## The next line will take a while to run (around a minute on a macbook pro)
 out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
 ```
-
-```r
+```{r, eval = FALSE}
 ## This line will open a browser window where you can interactively
 ## choose the structure parameter for the phylogeny. 	
 out.agpca = visualizeFullFamily(out.ff,
@@ -52,26 +49,17 @@ out.agpca = visualizeFullFamily(out.ff,
                     var_data = tax_table(AntibioticPhyloseq),
                     var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
 ```
-
-```r
+```{r}
 ## Runs adaptive gPCA
 out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)
 ## plot the samples from adaptive gPCA
 ggplot(data.frame(out.agpca$U, sample_data(AntibioticPhyloseq))) +
     geom_point(aes(x = Axis1, y = Axis2, color = type, shape = ind))
-```
-
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
-
-```r
 ## plot the variables from adaptive gPCA
 ggplot(data.frame(out.agpca$QV, tax_table(AntibioticPhyloseq))) +
     geom_point(aes(x = Axis1, y = Axis2, color = Phylum))
 ```
-
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-2.png)
-
-```r
+```{r, eval = FALSE}
 ## This line will open a browser window that allows you to#
 ## access more information about the taxa in the biplot
 t = inspectTaxonomy(out.agpca, AntibioticPhyloseq)
