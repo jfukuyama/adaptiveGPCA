@@ -1,18 +1,10 @@
-# Adaptive gPCA
-
 ## Description
 
-Adaptive gPCA, described in
-[Fukuyama 2017](https://arxiv.org/abs/1702.00501), is a flexible
-method for incorporating side information into principal components
-analysis. It was developed for using information about the
-phylogenetic structure of bacteria in microbiome data analysis, but it
-is applicable to more general kinds of structure. 
+Adaptive gPCA, described in [Fukuyama 2017](https://arxiv.org/abs/1702.00501), is a flexible method for incorporating information about the relatioships between the variables into principal components analysis. It was developed for incorporating information about the phylogenetic structure of bacteria in microbiome data analysis, but it is applicable more generally (for example, graph structure on the variables or distances between the variables). 
 
 ## Installation
 
-Adaptive gPCA is implemented in the R package adaptiveGPCA, which can
-be installed either from CRAN or github. To install from CRAN use
+The method is implemented in the R package adaptiveGPCA, which can be installed either from CRAN or github. To install from CRAN use
 ```r
 install.packages("adaptiveGPCA")
 ```
@@ -34,7 +26,7 @@ data(AntibioticPhyloseq)
 pp = processPhyloseq(AntibioticPhyloseq)
 ```
 
-The next command creates a sequence of ordinations with a range of values for the structure parameter, going from no structure to maximal structure. The `visualizeFullFamily` function will open a browser window andallows you to see the effect of changing this parameter interactively.
+The next command creates a sequence of ordinations with a range of values for the structure parameter, going from no structure to maximal structure. The `visualizeFullFamily` function will open a browser window and allows you to see the effect of changing this parameter interactively.
 ```{r, eval = FALSE}
 out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
 out.agpca = visualizeFullFamily(out.ff,
