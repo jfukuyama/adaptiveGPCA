@@ -27,25 +27,25 @@ devtools::install_github("jfukuyama/adaptiveGPCA")
 
 The package comes with a [full vignette](https://cran.r-project.org/web/packages/adaptiveGPCA/vignettes/adaptive_gpca_vignette.html), which explains all of the functions and their arguments. To get a feel for what the package does, you can try out the following commands, which run adaptive gPCA on an example microbiome dataset that comes with the package.
 
+First we load the required packages
+
 ```r
-## Load the required packages
 library(adaptiveGPCA)
 library(ggplot2)
 library(phyloseq)
 ```
 
-```r
-## Load the example data, which is stored as a phyloseq object
-data(AntibioticPhyloseq)
-## Process the phyloseq object so it contains the elements required for adaptive gPCA
-pp = processPhyloseq(AntibioticPhyloseq)
-## The next line will take a while to run (around a minute on a macbook pro)
-out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
-```
+Then load the example data, which is stored as a phyloseq object, and process it to get the correct input for adaptive gPCA. 
 
 ```r
-## This line will open a browser window where you can interactively
-## choose the structure parameter for the phylogeny. 	
+data(AntibioticPhyloseq)
+pp = processPhyloseq(AntibioticPhyloseq)
+```
+
+The next command creates a sequence of ordinations with a range of values for the structure parameter, going from no structure to maximal structure. The `visualizeFullFamily` function will open a browser window andallows you to see the effect of changing this parameter interactively.
+
+```r
+out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
 out.agpca = visualizeFullFamily(out.ff,
                     sample_data = sample_data(AntibioticPhyloseq),
                     sample_mapping = aes(x = Axis1, y = Axis2, color = type),
@@ -53,10 +53,10 @@ out.agpca = visualizeFullFamily(out.ff,
                     var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
 ```
 
+The `adaptivegpca` function chooses the structure parameter automatically, and we can make plots of the samples and species corresponding to the automatically chosen structure parameter. 
+
 ```r
-## Runs adaptive gPCA, autamatic choice of structure parameter
 out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)
-## Plot the samples from adaptive gPCA
 ggplot(data.frame(out.agpca$U, sample_data(AntibioticPhyloseq))) +
     geom_point(aes(x = Axis1, y = Axis2, color = type, shape = ind))
 ```
@@ -64,15 +64,14 @@ ggplot(data.frame(out.agpca$U, sample_data(AntibioticPhyloseq))) +
 ![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png)
 
 ```r
-## Plot the variables from adaptive gPCA
 ggplot(data.frame(out.agpca$QV, tax_table(AntibioticPhyloseq))) +
     geom_point(aes(x = Axis1, y = Axis2, color = Phylum))
 ```
 
 ![plot of chunk unnamed-chunk-5](figure/unnamed-chunk-5-1.png)
 
+Finally, the `inspectTaxonomy` function will open a browser window that allows you to get more information about the taxa in the plot above. 
+
 ```r
-## This line will open a browser window that allows you to
-## access more information about the taxa in the biplot
 t = inspectTaxonomy(out.agpca, AntibioticPhyloseq)
 ```
