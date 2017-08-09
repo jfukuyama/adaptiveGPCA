@@ -1,10 +1,10 @@
 ## Description
 
-Adaptive gPCA, described in [Fukuyama 2017](https://arxiv.org/abs/1702.00501), is a flexible method for incorporating information about the relatioships between the variables into principal components analysis. It was developed for incorporating information about the phylogenetic structure of bacteria in microbiome data analysis, but it is applicable more generally (for example, graph structure on the variables or distances between the variables). 
+Adaptive gPCA, described in [Fukuyama (2017)](https://arxiv.org/abs/1702.00501), is a flexible method for incorporating information about the relationships between the variables into principal components analysis. It was developed for incorporating information about the phylogenetic structure of bacteria in microbiome data analysis, but it is applicable more generally (for example, graph structure on the variables or distances between the variables). 
 
 ## Installation
 
-The method is implemented in the R package adaptiveGPCA, which can be installed either from CRAN or github. To install from CRAN use
+The method is implemented in the R package adaptiveGPCA. To install, use
 ```r
 install.packages("adaptiveGPCA")
 ```
