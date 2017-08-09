@@ -12,15 +12,9 @@ is applicable to more general kinds of structure.
 ## Installation
 
 Adaptive gPCA is implemented in the R package adaptiveGPCA, which can
-be installed either from CRAN or github. To install from CRAN
-(recommended), use
+be installed either from CRAN or github. To install from CRAN use
 ```r
 install.packages("adaptiveGPCA")
-```
-
-To install from GitHub, first install devtools, and then use
-```r
-devtools::install_github("jfukuyama/adaptiveGPCA")
 ```
 
 ## Quick start for microbiome data
@@ -47,13 +41,13 @@ The next command creates a sequence of ordinations with a range of values for th
 ```r
 out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
 out.agpca = visualizeFullFamily(out.ff,
-                    sample_data = sample_data(AntibioticPhyloseq),
-                    sample_mapping = aes(x = Axis1, y = Axis2, color = type),
-                    var_data = tax_table(AntibioticPhyloseq),
-                    var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
+    sample_data = sample_data(AntibioticPhyloseq),
+    sample_mapping = aes(x = Axis1, y = Axis2, color = type),
+    var_data = tax_table(AntibioticPhyloseq),
+    var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
 ```
 
-The `adaptivegpca` function chooses the structure parameter automatically, and we can make plots of the samples and species corresponding to the automatically chosen structure parameter. 
+The `adaptivegpca` function chooses the structure parameter automatically, and we can make plots of the samples and species corresponding to that value of the structure parameter. 
 
 ```r
 out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)

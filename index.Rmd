@@ -38,13 +38,13 @@ The next command creates a sequence of ordinations with a range of values for th
 ```{r, eval = FALSE}
 out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
 out.agpca = visualizeFullFamily(out.ff,
-                    sample_data = sample_data(AntibioticPhyloseq),
-                    sample_mapping = aes(x = Axis1, y = Axis2, color = type),
-                    var_data = tax_table(AntibioticPhyloseq),
-                    var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
+    sample_data = sample_data(AntibioticPhyloseq),
+    sample_mapping = aes(x = Axis1, y = Axis2, color = type),
+    var_data = tax_table(AntibioticPhyloseq),
+    var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
 ```
 
-The `adaptivegpca` function chooses the structure parameter automatically, and we can make plots of the samples and species corresponding to the automatically chosen structure parameter. 
+The `adaptivegpca` function chooses the structure parameter automatically, and we can make plots of the samples and species corresponding to that value of the structure parameter. 
 ```{r fig.width=6, fig.height=3}
 out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)
 ggplot(data.frame(out.agpca$U, sample_data(AntibioticPhyloseq))) +
