@@ -1,6 +1,6 @@
 Package: adaptiveGPCA
 Title: Adaptive Generalized PCA
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: person("Julia", "Fukuyama", email = "julia.fukuyama@gmail.com", role = c("aut", "cre"))
 Description: Implements adaptive gPCA, as described in: Fukuyama, J. (2017)
     <arXiv:1702.00501>. The package also includes functionality for applying
