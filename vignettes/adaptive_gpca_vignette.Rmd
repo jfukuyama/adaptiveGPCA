@@ -1,0 +1,290 @@
+---
+title: "adaptiveGPCA vignette"
+author: "Julia Fukuyama"
+date: "`r Sys.Date()`"
+output:
+  rmarkdown::html_document:
+    toc: true
+    toc_depth: 2
+    toc_float: true
+    theme: lumen
+    keep_md: true
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{adaptvieGPCA vignette}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, echo = FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 6, fig.height = 4)
+```
+## Overview
+
+### Adaptive gPCA
+
+Adaptive gPCA
+([Fukuyama, J. (2017)](https://arxiv.org/abs/1702.00501)) is a
+flexible method for incorporating side information about the variables
+into principal components analysis. The method has a single parameter,
+$r$, which controls how much weight to give to the side information:
+$r = 0$ corresponds to standard PCA (the side information is not used
+at all), and $r = 1$ corresponds to the maximum amount of weight on
+the side information.
+
+The output from adaptive gPCA is analogous to that given by PCA: we
+get representations of the samples and the variables, which can be
+visualized as either independently or as a biplot. The difference with
+standard PCA is that, assuming $r > 0$, the variable loadings are
+regularized so that similar variables are encouraged to have similar
+loadings on the principal axes.
+
+### Package functionality
+
+There are two main ways of using this package. The function
+`adaptivegpca` will choose the value of $r$ automatically, while the
+function `gpcaFullFamily` produces analogous output for the full range
+of values of $r$, which is then chosen manually. We will illustrate
+both methods in this vignette.
+
+Although adaptive gPCA can be applied more generally, the method was
+developed to incorporate phylogenetic structure in microbiome data
+analysis, and so there are also functions to interface with
+[phyloseq](http://bioconductor.org/packages/release/bioc/html/phyloseq.html)
+objects and functions to visualize adaptive gPCA output along with a
+phylogenetic tree.
+
+### Data
+
+The data set we will use to illustrate the functionality of this
+package is an antibiotic time course study[^1]. In this experiment,
+three subjects were given two courses of antibiotics, and the
+abundances of bacteria in the gut microbiome were measured before,
+during, and after each course of antibiotics. The data is stored in a
+phyloseq object called `AntibioticPhyloseq`, which contains
+variance-stabilized and centered abundances on the `otu_table` slot, a
+phylogenetic tree describing the relationships between the bacterial
+species measured in the `phy_tree` slot, and information about the
+samples in the `sample_data` slot. We want a low-dimensional
+representation of the samples which takes into account the
+phylogenetic similarities between the bacteria, which is what adaptive
+gPCA will provide for us.
+
+
+[^1]: Dethlefsen, L., and D. A. Relman. "Incomplete recovery and
+individualized responses of the human distal gut microbiota to
+repeated antibiotic perturbation." Proc Natl Acad Sci USA 108. Suppl 1
+(2010): 4554-4561.
+
+## Fitting an agpca model
+
+Now that we have described the data we will be using, we will show how
+to use the package. The first step is to load the required packages and data. 
+```{r}
+library(adaptiveGPCA)
+library(ggplot2)
+library(phyloseq)
+data(AntibioticPhyloseq)
+theme_set(theme_bw())
+```
+
+Next, we create the inputs required for the `adaptivegpca`
+function. If we have a `phyloseq` object containing taxon abundances
+and a phylogenetic tree, the function `processPhyloseq` will create a
+list with the following elements:
+
+- A centered data matrix, stored as `X` in the output. 
+
+- A similarity matrix based on the phylogeny, stored as `Q` in the
+  output. 
+
+- A vector of weights, stored as `weights`. The weights are only
+  relevant for correspondence analysis, so if the function is invoked
+  with `ca = FALSE` (the default), the weights vector will be a vector
+  containing only 1's and can be ignored. 
+
+```{r}
+pp = processPhyloseq(AntibioticPhyloseq)
+```
+
+Next, we pass our data matrix and our similarity matrix to the
+`adaptivegpca` function. The arguments to `adaptivegpca` are
+
+- `X`: A centered data matrix.
+
+- `Q`: A symmetric, positive definite matrix describing the
+similarities between the variables.
+
+- `k`: The number of axes to keep, defaults to 2. 
+
+- `weights`: A vector with sample weights, defaults to a vector of all
+  1's (equal weights on each sample). 
+
+The matrices `X` and `Q` will be generated from a phyloseq object
+using the OTU table and the phylogenetic tree with the
+`processPhyloseq` function. If you have another kind of data, you can
+generate these matrices yourself. Below we use the output from
+`processPhyloseq` to fit an adaptive gPCA model. 
+
+```{r}
+out.agpca = adaptivegpca(pp$X, pp$Q, k = 2)
+```
+
+The output from the `adaptivegpca` function is stored in an object of
+class `adaptivegpca`, which has some generic printing and plotting
+functions associated with it. As such, if we just print out the
+object, it will give us some basic information about the results,
+namely the number of axes, the value of $r$ chosen, and the fraction
+of the variance explained by the top axes. 
+```{r}
+out.agpca
+```
+
+The output is a list with several elements. These are:
+
+- `U`: The sample scores on the principal axes.
+
+- `V`: The variable loadings before rotation. These are not used for
+  plotting --- they need to be rotated into the space of the samples
+  for the biplot representation.
+  
+- `QV`: The variable loadings rotated to be in the same space as the
+  sample scores. These are the variable loadings that should be
+  plotted for a biplot representation of the samples and the
+  variables.
+  
+- `vars`: The variances along the principal axes.
+  
+- `r`: The value of $r$ chosen by adaptivegpca, corresponding to how
+    much regularization to perform according to the structure of the
+    variables. $r = 0$ is standard PCA (variable structure is not
+    considered at all), and $r = 1$ is the maximal amount of
+    regularization.
+	
+- `evals`: The eigenvalues of the modified similarity matrix. This is
+  described in more detail in the paper, but it is an alternate way of
+  understanding how much regularization is performed by the
+  method. The larger the top eigenvalues are compared with the
+  subsequent ones, the more regularization there is toward the top
+  eigenvectors of the similarity matrix.
+
+
+## Plotting the output
+
+We can also plot the output from `adaptivegpca` using a generic
+plotting function. By default, this will produce a scree plot, as
+shown below:
+
+```{r}
+plot(out.agpca)
+```
+
+The plotting function has a `type` argument, which can be either
+`scree`, `samples`, or `variables`. `type = scree` will give a plot
+showing the fraction of the variance explained by each of the axes,
+`type = samples` will show the sample scores along the principal axes,
+and `type = variables` will show the variable loadings on the
+principal axes. The `axes` argument allows the user to specify which
+axes to plot, by default these are axes 1 and 2.
+
+```{r}
+plot(out.agpca, type = "samples", axes = c(1,2))
+plot(out.agpca, type = "variables", axes = c(1,2))
+```
+
+Finally, the `inspectTaxonomy` function allows interactive inspection
+of the taxa or variables plot, assuming you started the analysis with
+a phyloseq object.  This function will open a browser window with a
+representation of the phylogenetic tree and the taxon loadings on the
+adaptive gPCA axes. Taxa in this plot can be selected by "brushing"
+the plot (drawing a rectangular box), and the selected taxa will be
+highlighted on the phylogenetic tree and their taxonomic assignments
+will be printed below. An example call is given below:
+```{r eval = FALSE}
+inspectTaxonomy(out.agpca, AntibioticPhyloseq)
+```
+
+The arguments to `inspectTaxonomy` are
+
+- `agpcafit`: The output from `adaptivegpca`.
+
+- `physeq`: A phyloseq object with a taxonomy table and a phylogenetic
+  tree. Should be the same one used for for the adaptive gPCA fit. 
+
+- `axes`: Which axes to plot. Defaults to the first two axes. 
+
+- `br.length`: Should the tree include branch lengths? The trees tend
+  to look better when the branches are all plotted as being the same
+  length, so this defaults to `FALSE`.
+
+- `height`: The height of the plotting area in pixels. Defaults to 600.
+
+If you click the "done" button in the browser window, the app will
+close and the function will return a table describing the taxonomy,
+position along selected axes, and names of the selected taxa. 
+
+## Interactive choice of $r$
+
+We can also choose the value of $r$ manually. In the previous section,
+we described how to use the `adaptivegpca` function, which chooses the
+value of $r$ automatically, but if we would like to see the results for
+different values of $r$ and to choose one manually, we can first use
+the `gpcaFullFamily` function to create a full set of models and then
+use the `visualizeFullFamily` function to visualize the biplots for
+each value of $r$.
+
+`gpcaFullFamily` takes the same arguments as `adaptivegpca`, along
+with some additional arguments describing the form of the output. 
+
+The `visualizeFullFamily` function is a shiny gadget. Calling this
+function will open a browser window where you can visualize the data
+set for a range of values of $r$. Clicking "done" in this window will
+give as output an object of the same format as that given by the
+`adaptivegpca` function, the difference being that the value of $r$
+was chosen manually instead of automatically. The
+`sample_data`/`sample_mapping` and `var_data`/`var_mapping` arguments
+allow you to customize the visualization. Without these arguments, the
+first two axes will be plotted for both the samples and the
+variables. If you include these arguments, you can customize the plots
+by providing aesthetic mappings for ggplot. Note that the code below
+is only included as an example and not evaluated in the vignette.
+
+```{r, eval = FALSE}
+out.ff = gpcaFullFamily(pp$X, pp$Q, k = 2)
+out.agpca = visualizeFullFamily(out.ff,
+                    sample_data = sample_data(AntibioticPhyloseq),
+                    sample_mapping = aes(x = Axis1, y = Axis2, color = type),
+                    var_data = tax_table(AntibioticPhyloseq),
+                    var_mapping = aes(x = Axis1, y = Axis2, color = Phylum))
+```
+
+In either case, we can plot the results. This time we will do it
+manually, using ggplot. The sample scores on the principal axes are
+located in `out.agpca$U` and the loadings of the variables on the
+principal axes are located in `out.agpca$QV`. To plot the samples, we
+make a data frame that includes `out.agpca$U` and the sample data, and
+to plot the taxa we make a data frame containing `out.agpca$QV` and
+the taxonomy table. 
+
+```{r fig.width=7}
+ggplot(data.frame(out.agpca$U, sample_data(AntibioticPhyloseq))) +
+    geom_point(aes(x = Axis1, y = Axis2, color = type, shape = ind)) +
+    xlab("Axis 1") + ylab("Axis 2")
+```
+```{r fig.width=9}
+ggplot(data.frame(out.agpca$QV, tax_table(AntibioticPhyloseq))) +
+    geom_point(aes(x = Axis1, y = Axis2, color = Phylum)) +
+    xlab("Axis 1") + ylab("Axis 2")
+```
+
+
+## Correspondence analysis
+
+Finally, note that the `processPhyloseq` function also has an argument `ca`
+(for correspondence analysis). This should be used with phyloseq
+objects containing raw counts, and it will process a phyloseq object
+so as to do an adaptive gPCA version of correspondence analysis (this
+entails transforming counts to relative abunadnces, computing sample
+weights based on the overall counts for the samples, and finally doing
+a weighted centering of the relative abundances). 
