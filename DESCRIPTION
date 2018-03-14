@@ -19,4 +19,5 @@ Imports:
     ggplot2 (>= 1.0.0),
     shiny (>= 1.0.0),
     phyloseq (>= 1.14.0)
+biocViews:
 RoxygenNote: 6.0.1
