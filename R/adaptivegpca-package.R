@@ -258,6 +258,10 @@ findReflection <- function(df1, df2) {
 #' @param k The number of components to return.
 #' @keywords internal
 gpcaEvecs <- function(X, evecs, evals, D = rep(1, nrow(X)), k) {
+    if(any(evals < 0)) {
+        warning(sprintf("Setting negative eigenvalues to 0.\n  The negative eigenvalue with largest magnitude is %e,\n  If this is far from zero you should check that your inner product\n  matrix is really positive definite.", min(evals)))
+        evals[evals < 0] = 0
+    }
     J = X %*% evecs
     J = sweep(J, 2, STATS = sqrt(evals), FUN = "*")
     J = sweep(J, 1, STATS = D, FUN = "*")
