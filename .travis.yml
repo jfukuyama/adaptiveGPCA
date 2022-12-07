@@ -1,6 +1,6 @@
 # R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
 
-language: R
-r: bioc-devel
+language: r
+r: bioc-release
 sudo: false
 cache: packages
